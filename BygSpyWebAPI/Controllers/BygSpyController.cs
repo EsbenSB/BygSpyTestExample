@@ -1,9 +1,9 @@
-﻿using BygSpy.DataAccess;
-using BygSpy.Models;
+﻿using BygSpyWebAPI.DataAccess;
+using BygSpyWebAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BygSpy.Controllers
+namespace BygSpyWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

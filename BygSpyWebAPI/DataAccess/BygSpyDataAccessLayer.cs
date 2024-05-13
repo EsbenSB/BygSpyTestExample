@@ -1,7 +1,7 @@
-﻿using BygSpy.Models;
+﻿using BygSpyWebAPI.Models;
 using MongoDB.Driver;
 
-namespace BygSpy.DataAccess
+namespace BygSpyWebAPI.DataAccess
 {
     public class BygSpyDataAccessLayer
     {

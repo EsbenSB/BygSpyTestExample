@@ -1,6 +1,6 @@
 ﻿using MongoDB.Driver;
 
-namespace BygSpy.Models
+namespace BygSpyWebAPI.Models
 {
     public class BygSpyDBContext
     {
