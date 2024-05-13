@@ -1,9 +1,9 @@
-﻿using BygSpyWebAPI.Models;
+﻿using BygSpyServer.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Xml.Linq;
 
-namespace BygSpyWebAPI.MongoDb
+namespace BygSpyServer.MongoDb
 {
     public class MongoService
     {
@@ -19,6 +19,7 @@ namespace BygSpyWebAPI.MongoDb
         }
 
         public IMongoCollection<User> Users => _database.GetCollection<User>("Users");
+        public IMongoCollection<User> spy => _database.GetCollection<User>("spy");
     }
 }
 

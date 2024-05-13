@@ -1,28 +1,69 @@
-﻿using BygSpyWebAPI.Models;
+﻿using BygSpyServer.Models;
+using BygSpyServer.Repositories;
+using BygSpyWebAPI.Repositories.Interfaces;
+using BygSpyWebAPI.Services.Interfaces;
+using MongoDB.Bson;
 
-namespace BygSpyWebAPI.Services
+namespace BygSpyServer.Services
 {
-    public class SpyService
+    public class SpyService : ISpyService
     {
-        //private readonly DatabaseSettings _databaseSettings;
+        private readonly DatabaseSettings _databaseSettings;
+        private readonly ISpyRepository _spyRepo;
 
-        //public SpyService(DatabaseSettings databaseSettings)
-        //{
-        //    _databaseSettings = databaseSettings;
-        //}
+        public SpyService(DatabaseSettings databaseSettings, ISpyRepository spyRepo)
+        {
+            _databaseSettings = databaseSettings;
+            _spyRepo = spyRepo;
+        }
+        public async Task DeleteSpyAsync(string id) 
+        {
+            try
+            {
+                id = "htrehtrehtrhrte";
+                await _spyRepo.DeleteSpyAsync(id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+        public async Task UpdateSpyAsync(string id, Spy updatedSpy)
+        {
+            try
+            {
+                await _spyRepo.UpdateSpyAsync(id, updatedSpy);
 
-        //public object CreateSpyAsync(Spy spy)
-        //{
-        //    throw new NotImplementedException();
-        //}
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
 
-        //public List<Spy> GetAllSpies()
-        //{
-        //    // MongoDB operations to get all users
-        //    return new List<Spy>();
-        //}
+        public async Task<List<Spy>> GetAllSpies()
+        {
+          var result = await _spyRepo.GetAllSpyAsync();
+            return result;
+        }
+        public async Task<Spy> GetSpyByIdAsync(string id)
+        {
+            var result = await _spyRepo.GetSpyByIdAsync(id);
+            return result;
+        }
 
-        // Other CRUD operations...
+        public async Task PostSpy(Spy spy)
+        {
+            try
+            {
+                spy.Id = ObjectId.GenerateNewId().ToString();
+                await _spyRepo.CreateSpyAsync(spy);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
     }
 }
 

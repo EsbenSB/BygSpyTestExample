@@ -1,47 +1,56 @@
-﻿//using BygSpyWebAPI.Services;
-//using Microsoft.AspNetCore.Mvc;
+﻿using BygSpyServer.Models;
+using BygSpyServer.Services;
+using BygSpyWebAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
-//namespace BygSpyWebAPI.Controllers
-//{
-//    [Route("api/spy")]
-//    [ApiController]
-//    public class SpyController : ControllerBase
-//    {
-//        private readonly SpyService _spyService;
+namespace BygSpyServer.Controllers
+{
+    [Route("api/spy")]
+    [ApiController]
+    public class SpyController : ControllerBase
+    {
+        private readonly ISpyService _spyService;
 
-//        public SpyController(DatabaseSettings databaseSettings)
-//        {
-//            _spyService = new SpyService(databaseSettings);
-//        }
+        public SpyController(DatabaseSettings databaseSettings, ISpyService spyService)
+        {
+            _spyService = spyService;
+        }
 
-//        [HttpGet]
-//        public IEnumerable<string> GetAllSpies()
-//        {
-//            return new string[] { "value1", "value2" };
-//        }
+        [HttpGet]
+        public async Task<List<Spy>> GetAllSpies()
+        {
+            return await _spyService.GetAllSpies();
+        }
 
-//        [HttpGet("{id}")]
-//        public string GetSpyById(int id)
-//        {
-//            return "value";
-//        }
+        [HttpGet("{id}")]
+        public Task<Spy> GetSpyByIdAsync(string id)
+        {
+            //todo delete me when guid is fixed
+            id = "htrehtre";
+            var result = _spyService.GetSpyByIdAsync(id);
+            return result;
+        } 
 
-//        [HttpPost]
-//        public void CreateSpy([FromBody] string value)
-//        {
-//            // Implement your logic here
-//        }
+        [HttpPost]
+        public void PostSpy([FromBody] Spy Spy)
+        {
+            _spyService.PostSpy(Spy);
+        }
 
-//        [HttpPut("{id}")]
-//        public void UpdateSpy(Guid id, [FromBody] string value)
-//        {
-//            // Implement your logic here
-//        }
+        [HttpPut("{id}")]
+        public async void UpdateSpy(Guid id, [FromBody] Spy spyObject)
+        {
+            //todo delete me when guid is fixed
+           var test = "htrehtre";
+            //Convert.ToString(id)
+            await _spyService.UpdateSpyAsync(test, spyObject);
+        }
 
-//        [HttpDelete("{id}")]
-//        public void DeleteSpyById(Guid id)
-//        {
-//            // Implement your logic here
-//        }
-//    }
-//}
+        [HttpDelete("{id}")]
+        public async void DeleteSpyById(Guid id)
+        {
+            
+           await _spyService.DeleteSpyAsync(Convert.ToString(id));
+        }
+    }
+}

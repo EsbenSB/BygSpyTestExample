@@ -1,24 +1,25 @@
-﻿using BygSpyWebAPI.Models;
+﻿using BygSpyServer.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using BygSpyWebAPI.Services.Interfaces;
+using System.Net;
+using BygSpyWebAPI.Models;
+using ZstdSharp;
+using BygSpyWebAPI.Repositories.Interfaces;
 namespace BygSpyServer.Services
 {
     public class SpyingObjectService : ISpyingObjectService
     {
-        //private readonly DatabaseSettings _databaseSettings;
+        
+        private readonly DatabaseSettings _databaseSettings;
         private readonly HttpClient _httpClient;
-        public SpyingObjectService(HttpClient httpClient)
+        private readonly ISpyingObjectRepository _spyingObjectRepository;
+        public SpyingObjectService(DatabaseSettings databaseSettings, HttpClient httpClient, ISpyingObjectRepository spyingObjectRepository)
         {
-            //_databaseSettings = databaseSettings;
+            _databaseSettings = databaseSettings;
             _httpClient = httpClient;
-        }
-
-        public List<SpyingObject> GetAllSpyingObjects()
-        {
-            // MongoDB operations to get all users
-            return new List<SpyingObject>();
+            _spyingObjectRepository = spyingObjectRepository;
         }
 
         public List<SpyingObject> CreateSpyObject()
@@ -27,16 +28,18 @@ namespace BygSpyServer.Services
             return new List<SpyingObject>();
         }
 
-        public async Task<string> GetAddressId(string address)
+        // til at lave et spyobject
+        public async Task<SpyingObjectTempEntity> GetAddressId(string address)
         {
-            
+
             try
             {
-                string url = "https://services.datafordeler.dk//BBR/BBRPublic/1/rest/grund?jordstykke=1219804&&username=QRUSLIHSDE&password=SOFTWAREKval!tet2024";
+                SpyingObjectTempEntity spyingObjectTempEntity = new SpyingObjectTempEntity();
+                var encoded_address = EncodeingString(address);
+                string url = $"https://api.dataforsyningen.dk/adresser?q={encoded_address}";
 
-                using (_httpClient)
-                {
-                  
+              
+
                     HttpResponseMessage response = await _httpClient.GetAsync(url);
 
                     if (response.IsSuccessStatusCode)
@@ -47,16 +50,130 @@ namespace BygSpyServer.Services
 
                         foreach (JObject jsonObject in jsonArray)
                         {
-                            string bfeNummer = (string)jsonObject["bestemtFastEjendom"]["bfeNummer"];
+                        spyingObjectTempEntity.addressId = (string)jsonObject["id"];
+                        spyingObjectTempEntity.Street = (string)jsonObject["adgangsadresse"]["vejstykke"]["navn"];
+                        spyingObjectTempEntity.City = (string)jsonObject["adgangsadresse"]["postnummer"]["navn"];
 
-                            if (!string.IsNullOrEmpty(bfeNummer))
-                                return bfeNummer;
+                        
+                        if (spyingObjectTempEntity is not null)
+                                return spyingObjectTempEntity;
                         }
                     }
                     else
                     {
                         Console.WriteLine($"Failed to fetch data. Status code: {response.StatusCode}");
                     }
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+
+            return null;
+        }
+
+        public async Task<string> GetJordstykkeFromAddressId(string addressId)
+        {
+
+            try
+            {
+                var encoded_addressId = EncodeingString(addressId);
+                string url = $"https://services.datafordeler.dk/DAR/DAR/2.0.0/rest/adresse?id={encoded_addressId}&username=QRUSLIHSDE&password=SOFTWAREKval!tet2024";
+
+                HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    JArray jsonArray = JArray.Parse(jsonResponse);
+
+                    foreach (JObject jsonObject in jsonArray)
+                    {
+
+                        string jordstykke = (string)jsonObject["husnummer"]["jordstykke"];
+
+                        if (!string.IsNullOrEmpty(jordstykke))
+                            return jordstykke;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to fetch data. Status code: {response.StatusCode}");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+
+            return null;
+        }
+
+
+        public async Task<int> GetBfeFromJordstykke(string jordstykke)
+        {
+            int bfeNummer = 0;
+            try
+            {
+                string url = $"https://services.datafordeler.dk//BBR/BBRPublic/1/rest/grund?jordstykke={jordstykke}&&username=QRUSLIHSDE&password=SOFTWAREKval!tet2024";
+               
+                    HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                        JArray jsonArray = JArray.Parse(jsonResponse);
+
+                        foreach (JObject jsonObject in jsonArray)
+                        {
+                        bfeNummer = Convert.ToInt32((string)jsonObject["bestemtFastEjendom"]["bfeNummer"]);
+
+                            return bfeNummer;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Failed to fetch data. Status code: {response.StatusCode}");
+                    }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+            
+          
+            return bfeNummer;
+        }
+
+        public async Task<int> GetGrundFromBfe(int bfe)
+        {
+            int status = 0;
+            try
+            {
+                string url = $"https://services.datafordeler.dk/BBR/BBRPublic/1/rest/grund?&bfenummer={bfe}&username=QRUSLIHSDE&password=SOFTWAREKval!tet2024";
+
+                HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    JArray jsonArray = JArray.Parse(jsonResponse);
+
+                    foreach (JObject jsonObject in jsonArray)
+                    {
+                        status = (int)jsonObject["status"];
+                        
+                            return status;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to fetch data. Status code: {response.StatusCode}");
                 }
             }
             catch (Exception ex)
@@ -64,31 +181,84 @@ namespace BygSpyServer.Services
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
 
-            // Return null if an error occurred or no data found
-            return null;
-
-
-            //string encodedAddress = System.Web.HttpUtility.UrlEncode(address);
-
-            //_httpClient.Timeout = TimeSpan.FromSeconds(30);
-
-
-
-            ////string apiUrl = $"https://api.dataforsyningen.dk/adresser?q={encodedAddress}";
-            //string apiUrl = $"https://services.datafordeler.dk/DAR/DAR/2.0.0/rest/adresse?id=0a3f50bc-7bb5-32b8-e044-0003ba298018&username=QRUSLIHSDE&password=SOFTWAREKval!tet2024";
-            //try
-            //{
-            //    var response = await _httpClient.GetAsync(apiUrl);
-            //    var responseBody = await response.Content.ReadAsStringAsync();
-            //    string id = ParseIdFromResponse(responseBody);
-            //    return id;
-            //}
-            //catch (Exception ex)
-            //{
-            //    // Log or handle the exception
-            //    return null; // or some default value
-            //}
+            return status;
         }
+
+        public async Task PostSpyingObject(SpyingObject spyObject)
+        {
+            try
+            {
+               await _spyingObjectRepository.CreateSpyingObjectAsync(spyObject);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+        public async Task DeleteSpyingObject(string bfe)
+        {
+            try
+            {
+                await _spyingObjectRepository.DeleteSpyingObjectAsync(bfe);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+
+        public async Task<List<SpyingObject>> GetAllSpyingObjectAsync() 
+        {
+            try {
+                var spies = await _spyingObjectRepository.GetAllSpyingObjectAsync();
+                return spies;
+            }
+            catch(Exception ex) {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+            return null;
+        }
+
+        public async Task<SpyingObject> GetSpyingObjectByIdAsync(string bfe) 
+        {
+         var result = await _spyingObjectRepository.GetSpyingObjectByIdAsync(bfe);
+            return result;
+        }
+        public async Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject)
+        {
+            try
+            {
+                await _spyingObjectRepository.UpdateSpyingObjectAsync(id, updatedSpyingObject);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+
+
+
+        // slutning af at lave et spyobject
+
+        public async Task<SpyingObject> MapToSpyingObject(SpyingObjectTempEntity spyingObjectTempEntity, SpyingObject spyObject)
+        {
+            try
+            {
+                spyObject.City = spyingObjectTempEntity.City;
+                spyObject.Street = spyingObjectTempEntity.Street;
+                return spyObject;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+
+            return null;
+        }
+        
+       
+
 
         //todo move me to a json handler file
         private string ParseIdFromResponse(string responseBody)
@@ -107,7 +277,15 @@ namespace BygSpyServer.Services
             return null;
         }
 
+        private string EncodeingString(string StringToConvert)
+        {
+            // Parse the JSON array
+            var encoded_StringToConvert = StringToConvert.Replace(" ", "%");
 
+          
+            // If the array is empty or doesn't contain the "id" field, return null
+            return encoded_StringToConvert;
+        }
 
     }
 }

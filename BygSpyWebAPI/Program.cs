@@ -1,20 +1,24 @@
 using BygSpyServer;
-using BygSpyWebAPI.MongoDb;
+using BygSpyServer.MongoDb;
 using BygSpyWebAPI.Services.Interfaces;
 using BygSpyServer.Services;
+using BygSpyWebAPI.Repositories.Interfaces;
+using BygSpyServer.Repositories;
+using BygSpyServer.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//builder.Services.AddSingleton<DatabaseSettings>();
+builder.Services.AddSingleton<DatabaseSettings>();
 builder.Services.AddSingleton<MongoService>(); // Or whichever lifetime suits your application
+builder.Services.AddSingleton<BygSpyDbContext>(); // Register BygSpyDbContext
+builder.Services.AddSingleton<ISpyingObjectRepository, SpyingObjectRepository>();
 builder.Services.AddSingleton<ISpyingObjectService, SpyingObjectService>();
-
+builder.Services.AddSingleton<ISpyService, SpyService>();
+builder.Services.AddSingleton<ISpyRepository, SpyRepository>();
 builder.Services.AddHttpClient();
 var app = builder.Build();
 
@@ -26,9 +30,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
