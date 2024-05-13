@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 
-namespace BygSpyWebAPI.Models
+namespace BygSpyServer.Models
 {
     public class User
     {

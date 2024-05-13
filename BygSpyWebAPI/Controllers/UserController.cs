@@ -1,42 +1,35 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using BygSpyWebAPI.Services;
-using BygSpyWebAPI.Models;
-using BygSpyWebAPI.MongoDb;
-using BygSpyWebAPI.Repositories;
-using BygSpyWebAPI.DataAccess;
+using BygSpyServer.Services;
+using BygSpyServer.Models;
+using BygSpyServer.MongoDb;
 
-namespace BygSpyWebAPI.Controllers
+namespace BygSpyServer.Controllers
 {
     [ApiController]
     [Route("api/users")]
     public class UserController : ControllerBase
     {
-        //private readonly UserService _userService;
-        //private readonly MongoService _mongoService;
-        //private readonly UserRepository _userRepository;
+        private readonly UserService _userService;
+        private readonly MongoService _mongoService;
 
-        //public UserController()
-        //{
-        //    //_mongoService = new MongoService();
-        //    //_userService = new UserService(databaseSettings, mongoService);
-        //    BygSpyDbContext db = new BygSpyDbContext();
-        //    _userRepository = new UserRepository(db);
-        //}
-
-        UserDataAccessLayer objuser = new UserDataAccessLayer();
+        public UserController(DatabaseSettings databaseSettings, MongoService mongoService)
+        {
+            _mongoService = new MongoService();
+            _userService = new UserService(databaseSettings, mongoService);
+        }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult GetAllUsers()
         {
-            var users = objuser.GetAllUsersAsync();
+            var users = _userService.GetAllUsers();
             return Ok(users);
         }
 
         [HttpGet("{id:length(24)}", Name = "GetUser")]
         public IActionResult GetUserById(Guid id)
         {
-            var user = objuser.GetUserByIdAsync(id);
+            var user = _userService.GetUserById(id);
 
             if (user == null)
             {
@@ -49,21 +42,21 @@ namespace BygSpyWebAPI.Controllers
         [HttpPost]
         public IActionResult CreateUser(User user)
         {
-            objuser.CreateUserAsync(user);
+            _userService.CreateUser(user);
             return CreatedAtRoute("GetUser", new { id = user.Id.ToString() }, user);
         }
 
         [HttpPut("{id:length(24)}")]
         public IActionResult UpdateUser(Guid id, User updatedUser)
         {
-            var user = objuser.GetUserByIdAsync(id);
+            var user = _userService.GetUserById(id);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            objuser.UpdateUserAsync(id, updatedUser);
+            _userService.UpdateUser(id, updatedUser);
 
             return NoContent();
         }
@@ -71,14 +64,14 @@ namespace BygSpyWebAPI.Controllers
         [HttpDelete("{id:length(24)}")]
         public IActionResult DeleteUser(Guid id)
         {
-            var user = objuser.GetUserByIdAsync(id);
+            var user = _userService.GetUserById(id);
 
             if (user == null)
             {
                 return NotFound();
             }
 
-            objuser.DeleteUserAsync(id);
+            _userService.DeleteUser(id);
 
             return NoContent();
         }
