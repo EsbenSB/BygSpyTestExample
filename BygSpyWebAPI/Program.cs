@@ -14,11 +14,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<DatabaseSettings>();
 builder.Services.AddSingleton<MongoService>(); // Or whichever lifetime suits your application
-builder.Services.AddSingleton<BygSpyDbContext>(); // Register BygSpyDbContext
+builder.Services.AddSingleton<BygSpyDBContext>(); // Register BygSpyDbContext
 builder.Services.AddSingleton<ISpyingObjectRepository, SpyingObjectRepository>();
 builder.Services.AddSingleton<ISpyingObjectService, SpyingObjectService>();
-builder.Services.AddSingleton<ISpyService, SpyService>();
 builder.Services.AddSingleton<ISpyRepository, SpyRepository>();
+builder.Services.AddSingleton<ISpyService, SpyService>();
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddHttpClient();
 var app = builder.Build();
 

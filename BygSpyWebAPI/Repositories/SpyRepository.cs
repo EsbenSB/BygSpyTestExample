@@ -10,7 +10,7 @@ namespace BygSpyWebAPI.Repositories
     {
         private readonly IMongoCollection<Spy> _spyingObjectCollection;
 
-        public SpyRepository(BygSpyDbContext dbContext)
+        public SpyRepository(MongoDb.BygSpyDBContext dbContext)
         {
             _spyingObjectCollection = dbContext.spy;
         }

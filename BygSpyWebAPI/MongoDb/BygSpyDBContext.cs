@@ -3,12 +3,12 @@ using MongoDB.Driver;
 
 namespace BygSpyWebAPI.MongoDb
 {
-    public class BygSpyDbContext
+    public class BygSpyDBContext
     {
 
         private readonly IMongoDatabase _database;
 
-        public BygSpyDbContext(IConfiguration configuration)
+        public BygSpyDBContext(IConfiguration configuration)
         {
 
             //var client = new MongoClient(configuration.GetConnectionString("MongoDB"));

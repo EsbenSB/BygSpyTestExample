@@ -3,77 +3,56 @@ using Microsoft.AspNetCore.Mvc;
 using BygSpyWebAPI.Services;
 using BygSpyWebAPI.Models;
 using BygSpyWebAPI.MongoDb;
+using BygSpyWebAPI.Services.Interfaces;
 
 namespace BygSpyWebAPI.Controllers
 {
-    [ApiController]
     [Route("api/users")]
+    [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userService;
-        private readonly MongoService _mongoService;
+        private readonly IUserService _userService;
 
-        public UserController(DatabaseSettings databaseSettings, MongoService mongoService)
+        public UserController(IUserService userService)
         {
-            _mongoService = new MongoService();
-            _userService = new UserService(databaseSettings, mongoService);
+            _userService = userService;
         }
 
         [HttpGet]
-        public IActionResult GetAllUsers()
+        public async Task<List<User>> GetAllUsers()
         {
-            var users = _userService.GetAllUsers();
-            return Ok(users);
+            return await _userService.GetAllUsers();
         }
 
-        [HttpGet("{id:length(24)}", Name = "GetUser")]
-        public IActionResult GetUserById(Guid id)
+        [HttpGet("{id}")]
+        public Task<User> GetUserByIdAsync(string id)
         {
-            var user = _userService.GetUserById(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(user);
+            //todo delete me when guid is fixed
+            id = "htrehtre";
+            var result = _userService.GetUserByIdAsync(id);
+            return result;
         }
 
         [HttpPost]
-        public IActionResult CreateUser(User user)
+        public void PostUser([FromBody] User user)
         {
-            _userService.CreateUser(user);
-            return CreatedAtRoute("GetUser", new { id = user.Id.ToString() }, user);
+            _userService.PostUser(user);
         }
 
-        [HttpPut("{id:length(24)}")]
-        public IActionResult UpdateUser(Guid id, User updatedUser)
+        [HttpPut("{id}")]
+        public async void UpdateUser(Guid id, [FromBody] User userObject)
         {
-            var user = _userService.GetUserById(id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _userService.UpdateUser(id, updatedUser);
-
-            return NoContent();
+            //todo delete me when guid is fixed
+            var test = "htrehtre";
+            //Convert.ToString(id)
+            await _userService.UpdateUserAsync(test, userObject);
         }
 
-        [HttpDelete("{id:length(24)}")]
-        public IActionResult DeleteUser(Guid id)
+        [HttpDelete("{id}")]
+        public async void DeleteUserById(Guid id)
         {
-            var user = _userService.GetUserById(id);
 
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            _userService.DeleteUser(id);
-
-            return NoContent();
+            await _userService.DeleteUserAsync(Convert.ToString(id));
         }
     }
 }

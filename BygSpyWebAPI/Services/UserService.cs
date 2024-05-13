@@ -1,82 +1,73 @@
 ﻿using BygSpyWebAPI.Models;
 using BygSpyWebAPI.MongoDb;
+using BygSpyWebAPI.Repositories.Interfaces;
+using BygSpyWebAPI.Services.Interfaces;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace BygSpyWebAPI.Services
 {
 
-    public class UserService
+    public class UserService : IUserService
     {
+        private readonly IUserRepository _userRepository;
+
 
         private readonly IMongoCollection<User> _userCollection;
         //private readonly MongoService _mongoService;
 
-        public UserService(DatabaseSettings databaseSettings, MongoService mongoService)
+        public UserService(IUserRepository userRepository)
         {
-            //#1
-            //var client = new MongoClient(databaseSettings.ConnectionString);
-            //var database = client.GetDatabase(databaseSettings.DatabaseName);
-            //_userCollection = database.GetCollection<User>("users");
-            
-            //#2
-            _userCollection = mongoService.Users;
+            _userRepository = userRepository;
         }
 
-      
-        //#1 check if this or #2 works
-        public async Task<List<User>> GetAllUsersAsync()
+        public async Task DeleteUserAsync(string id)
         {
-            return await _userCollection.Find(user => true).ToListAsync();
+            try
+            {
+                id = "htrehtrehtrhrte";
+                await _userRepository.DeleteUserAsync(id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+        public async Task UpdateUserAsync(string id, User updatedUser)
+        {
+            try
+            {
+                await _userRepository.UpdateUserAsync(id, updatedUser);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
         }
 
-        public async Task<User> GetUserByIdAsync(Guid id)
+        public async Task<List<User>> GetAllUsers()
         {
-            return await _userCollection.Find<User>(user => user.Id == id).FirstOrDefaultAsync();
+            var result = await _userRepository.GetAllUserAsync();
+            return result;
+        }
+        public async Task<User> GetUserByIdAsync(string id)
+        {
+            var result = await _userRepository.GetUserByIdAsync(id);
+            return result;
         }
 
-        public async Task<User> CreateUserAsync(User user)
+        public async Task PostUser(User user)
         {
-            await _userCollection.InsertOneAsync(user);
-            return user;
-        }
-
-        public async Task UpdateUserAsync(Guid id, User updatedUser)
-        {
-            await _userCollection.ReplaceOneAsync(user => user.Id == id, updatedUser);
-        }
-
-        public async Task DeleteUserAsync(Guid id)
-        {
-            await _userCollection.DeleteOneAsync(user => user.Id == id);
-        }
-
-
-        //#2
-        public List<User> GetAllUsers()
-        {
-            return _userCollection.Find(user => true).ToList();
-        }
-
-        public User GetUserById(Guid id)
-        {
-            return _userCollection.Find<User>(user => user.Id == id).FirstOrDefault();
-        }
-        public User CreateUser(User user)
-        {
-            _userCollection.InsertOne(user);
-            return user;
-        }
-
-        public void UpdateUser(Guid id, User updatedUser)
-        {
-            _userCollection.ReplaceOne(user => user.Id == id, updatedUser);
-        }
-
-        public void DeleteUser(Guid id)
-        {
-            _userCollection.DeleteOne(user => user.Id == id);
+            try
+            {
+                user.Id = ObjectId.GenerateNewId().ToString();
+                await _userRepository.CreateUserAcync(user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
         }
     }
-
-
 }
