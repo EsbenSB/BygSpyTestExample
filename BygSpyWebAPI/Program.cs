@@ -1,10 +1,10 @@
-using BygSpyServer;
-using BygSpyServer.MongoDb;
+using BygSpyWebAPI;
+using BygSpyWebAPI.MongoDb;
 using BygSpyWebAPI.Services.Interfaces;
-using BygSpyServer.Services;
+using BygSpyWebAPI.Services;
 using BygSpyWebAPI.Repositories.Interfaces;
-using BygSpyServer.Repositories;
-using BygSpyServer.Models;
+using BygSpyWebAPI.Repositories;
+using BygSpyWebAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

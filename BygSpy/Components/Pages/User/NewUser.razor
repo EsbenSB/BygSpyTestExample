@@ -4,7 +4,6 @@
 @using System.Threading.Tasks
 @using System.Net.Http
 @using System.Net.Http.Json
-@using Microsoft.AspNetCore.Blazor.HttpClientJsonExtensions
 @using BygSpy.Models
 @page "/newUser"
 <div class="container">
@@ -59,6 +58,6 @@
         user.Password = passwordValue;
         user.PhoneNumber = phoneNumberValue;
 
-        await Http.SendJsonAsync(HttpMethod.Post, "/api/User/Create", user);
+        //await Http.SendJsonAsync(HttpMethod.Post, "/api/User/Create", user);
     }   
 }

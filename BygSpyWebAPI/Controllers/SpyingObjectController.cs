@@ -1,10 +1,9 @@
-﻿using BygSpyServer.Models;
-using BygSpyServer.Services;
+﻿using BygSpyWebAPI.Services;
 using BygSpyWebAPI.Models;
 using BygSpyWebAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BygSpyServer.Controllers
+namespace BygSpyWebAPI.Controllers
 {
     [Route("api/spyingobject")] // Corrected route template
     [ApiController]

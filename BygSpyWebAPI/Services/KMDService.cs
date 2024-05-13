@@ -1,7 +1,7 @@
 ﻿
 //using Refit;
 
-namespace BygSpyServer.Services
+namespace BygSpyWebAPI.Services
 {
     //public class KMDService
     //{

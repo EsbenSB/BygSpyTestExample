@@ -1,4 +1,4 @@
-﻿using BygSpyServer.Models;
+﻿using BygSpyWebAPI.Models;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -7,7 +7,8 @@ using System.Net;
 using BygSpyWebAPI.Models;
 using ZstdSharp;
 using BygSpyWebAPI.Repositories.Interfaces;
-namespace BygSpyServer.Services
+
+namespace BygSpyWebAPI.Services
 {
     public class SpyingObjectService : ISpyingObjectService
     {

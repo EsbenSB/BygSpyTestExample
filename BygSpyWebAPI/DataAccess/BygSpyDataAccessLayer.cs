@@ -1,4 +1,4 @@
-﻿using BygSpyServer.Models;
+﻿using BygSpyWebAPI.Models;
 using MongoDB.Driver;
 
 namespace BygSpyWebAPI.DataAccess

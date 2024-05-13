@@ -1,4 +1,4 @@
-﻿namespace BygSpyServer.Models
+﻿namespace BygSpyWebAPI.Models
 {
     public class SpyConfiguration
     {

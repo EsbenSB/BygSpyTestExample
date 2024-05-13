@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using BygSpyWebAPI.Models;
 using System.Text;
 
 namespace BygSpyWebAPI.Models

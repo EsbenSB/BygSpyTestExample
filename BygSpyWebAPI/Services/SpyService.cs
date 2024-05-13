@@ -1,10 +1,10 @@
-﻿using BygSpyServer.Models;
-using BygSpyServer.Repositories;
+﻿using BygSpyWebAPI.Models;
+using BygSpyWebAPI.Repositories;
 using BygSpyWebAPI.Repositories.Interfaces;
 using BygSpyWebAPI.Services.Interfaces;
 using MongoDB.Bson;
 
-namespace BygSpyServer.Services
+namespace BygSpyWebAPI.Services
 {
     public class SpyService : ISpyService
     {

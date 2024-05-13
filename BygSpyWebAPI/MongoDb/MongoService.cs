@@ -1,9 +1,9 @@
-﻿using BygSpyServer.Models;
+﻿using BygSpyWebAPI.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Xml.Linq;
 
-namespace BygSpyServer.MongoDb
+namespace BygSpyWebAPI.MongoDb
 {
     public class MongoService
     {

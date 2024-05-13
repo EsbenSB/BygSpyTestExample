@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using BygSpyServer.Services;
-using BygSpyServer.Models;
-using BygSpyServer.MongoDb;
+using BygSpyWebAPI.Services;
+using BygSpyWebAPI.Models;
+using BygSpyWebAPI.MongoDb;
 
-namespace BygSpyServer.Controllers
+namespace BygSpyWebAPI.Controllers
 {
     [ApiController]
     [Route("api/users")]

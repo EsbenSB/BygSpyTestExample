@@ -1,5 +1,5 @@
-﻿using BygSpyServer.Models;
-using BygSpyServer.Repositories;
+﻿using BygSpyWebAPI.Models;
+using BygSpyWebAPI.Repositories;
 
 namespace BygSpyWebAPI.Repositories.Interfaces
 {

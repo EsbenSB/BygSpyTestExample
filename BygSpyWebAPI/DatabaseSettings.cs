@@ -1,4 +1,4 @@
-﻿namespace BygSpyServer
+﻿namespace BygSpyWebAPI
 {
     public class DatabaseSettings
     {

@@ -1,8 +1,8 @@
-﻿using BygSpyServer.Models;
-using BygSpyServer.MongoDb;
+﻿using BygSpyWebAPI.Models;
+using BygSpyWebAPI.MongoDb;
 using MongoDB.Driver;
 
-namespace BygSpyServer.Repositories
+namespace BygSpyWebAPI.Repositories
 {
     public class UserRepository
     {
