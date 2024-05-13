@@ -20,6 +20,7 @@ builder.Services.AddSingleton<ISpyingObjectService, SpyingObjectService>();
 builder.Services.AddSingleton<ISpyRepository, SpyRepository>();
 builder.Services.AddSingleton<ISpyService, SpyService>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddHttpClient();
 var app = builder.Build();
 
