@@ -11,28 +11,55 @@ namespace BygSpyWebAPI.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-
-
         private readonly IMongoCollection<User> _userCollection;
-        //private readonly MongoService _mongoService;
 
         public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
 
-        public async Task DeleteUserAsync(string id)
+        //public async Task<List<User>> GetAllUsersAsync() =>
+        //    await _userCollection.Find(_ => true).ToListAsync();
+
+        //public async Task<User?> GetUserAsync(string id) =>
+        //    await _userCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+        //public async Task CreateUserAsync(User newUser) =>
+        //    await _userCollection.InsertOneAsync(newUser);
+
+        //public async Task UpdateUserAsync(string id, User updatedUser) =>
+        //    await _userCollection.ReplaceOneAsync(x => x.Id == id, updatedUser);
+
+        //public async Task RemoveUserAsync(string id) =>
+        //    await _userCollection.DeleteOneAsync(x => x.Id == id);
+
+
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            var result = await _userRepository.GetAllUsersAsync();
+            return result;
+        }
+
+        public async Task<User?> GetUserAsync(string id)
+        {
+            var result = await _userRepository.GetUserAsync(id);
+            return result;
+        }
+
+        public async Task CreateUserAsync(User newUser)
         {
             try
             {
-                id = "htrehtrehtrhrte";
-                await _userRepository.DeleteUserAsync(id);
+                newUser.Id = ObjectId.GenerateNewId().ToString();
+                await _userRepository.CreateUserAsync(newUser);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
+
         public async Task UpdateUserAsync(string id, User updatedUser)
         {
             try
@@ -46,23 +73,11 @@ namespace BygSpyWebAPI.Services
             }
         }
 
-        public async Task<List<User>> GetAllUsers()
-        {
-            var result = await _userRepository.GetAllUserAsync();
-            return result;
-        }
-        public async Task<User> GetUserByIdAsync(string id)
-        {
-            var result = await _userRepository.GetUserByIdAsync(id);
-            return result;
-        }
-
-        public async Task PostUser(User user)
+        public async Task DeleteUserAsync(string id)
         {
             try
             {
-                user.Id = ObjectId.GenerateNewId().ToString();
-                await _userRepository.CreateUserAcync(user);
+                await _userRepository.RemoveUserAsync(id);
             }
             catch (Exception ex)
             {

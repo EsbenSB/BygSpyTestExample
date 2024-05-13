@@ -4,10 +4,16 @@ namespace BygSpyWebAPI.Services.Interfaces
 {
     public interface IUserService
     {
-        Task PostUser(User user);
-        Task<User> GetUserByIdAsync(string id);
-        Task<List<User>> GetAllUsers();
-        Task DeleteUserAsync(string id);
+        //Task<List<User>> GetAllUsersAsync();
+        //Task<User?> GetUserAsync(string id);
+        //Task CreateUserAsync(User newUser);
+        //Task UpdateUserAsync(string id, User updatedUser);
+        //Task RemoveUserAsync(string id);
+
+        Task<List<User>> GetAllUsersAsync();
+        Task<User?> GetUserAsync(string id);
+        Task CreateUserAsync(User newUser);
         Task UpdateUserAsync(string id, User updatedUser);
+        Task DeleteUserAsync(string id);
     }
 }

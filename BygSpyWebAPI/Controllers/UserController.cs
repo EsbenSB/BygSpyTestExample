@@ -19,40 +19,60 @@ namespace BygSpyWebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<List<User>> GetAllUsers()
-        {
-            return await _userService.GetAllUsers();
-        }
+        public async Task<List<User>> Get() =>
+            await _userService.GetAllUsersAsync();
 
-        [HttpGet("{id}")]
-        public Task<User> GetUserByIdAsync(string id)
+        [HttpGet("{id:length(24)}")]
+        public async Task<ActionResult<User>> Get(string id)
         {
-            //todo delete me when guid is fixed
-            id = "htrehtre";
-            var result = _userService.GetUserByIdAsync(id);
-            return result;
+            var user = await _userService.GetUserAsync(id);
+
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            return user;
         }
 
         [HttpPost]
-        public void PostUser([FromBody] User user)
+        public async Task<IActionResult> Post(User newUser)
         {
-            _userService.PostUser(user);
+            await _userService.CreateUserAsync(newUser);
+
+            return CreatedAtAction(nameof(Get), new { id = newUser.Id }, newUser);
         }
 
-        [HttpPut("{id}")]
-        public async void UpdateUser(Guid id, [FromBody] User userObject)
+        [HttpPut("{id:length(24)}")]
+        public async Task<IActionResult> Update(string id, User updatedUser)
         {
-            //todo delete me when guid is fixed
-            var test = "htrehtre";
-            //Convert.ToString(id)
-            await _userService.UpdateUserAsync(test, userObject);
+            var user = await _userService.GetUserAsync(id);
+
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            updatedUser.Id = user.Id;
+
+            await _userService.UpdateUserAsync(id, updatedUser);
+
+            return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async void DeleteUserById(Guid id)
+        [HttpDelete("{id:length(24)}")]
+        public async Task<IActionResult> Delete(string id)
         {
+            var user = await _userService.GetUserAsync(id);
 
-            await _userService.DeleteUserAsync(Convert.ToString(id));
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            await _userService.DeleteUserAsync(id);
+
+            return NoContent();
         }
     }
 }
