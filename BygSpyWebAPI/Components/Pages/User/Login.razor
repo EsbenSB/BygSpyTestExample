@@ -1,0 +1,42 @@
+﻿@page "/"
+@inject NavigationManager NavManager
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Login</h2>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" class="form-control" @bind="email" />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" class="form-control" @bind="password" />
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <NavLink class="nav-link" href="Index">
+                                    <button class="btn btn-primary btn-block">Login</button>
+                                </NavLink>
+                            </div>
+                            <div class="col justify-content-end">
+
+                                <NavLink class="nav-link justify-content-end" href="createUserPage"><button class="btn btn-primary btn-block justify-content-end">Create User</button></NavLink>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private string email;
+    private string password;
+
+
+}

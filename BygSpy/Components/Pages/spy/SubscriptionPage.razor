@@ -1,0 +1,123 @@
+﻿
+@page "/subscriptionPage"
+@inject IJSRuntime JSRuntime
+
+<div class="container">
+    <div class="row justify-content-center">
+        <!-- Column for adding new object and configuration -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Add New Object form -->
+                    <h2 class="card-title text-center mb-4">Add New Object</h2>
+                    <form @onsubmit.prevent="AddObject">
+                        <div class="form-group">
+                            <label for="objectName">Object Name:</label>
+                            <input type="text" id="objectName" class="form-control" @bind="newObjectName" />
+                        </div>
+                        <div class="form-group">
+                            <label for="objectAddress">Address:</label>
+                            <input type="text" id="objectAddress" class="form-control" @bind="newObjectAddress" />
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Add Object</button>
+                    </form>
+                    <hr />
+
+                    <!-- Configuration -->
+                    <h2 class="card-title text-center mb-4">Configuration</h2>
+                    @foreach (var obj in subscribedObjects)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" @bind="obj.IsSelected" />
+                            <label class="form-check-label" for="@($"checkbox-{obj.Name}")">@obj.Name</label>
+                        </div>
+                    }
+
+               
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Subscribed Objects</h2>
+                    <ul class="list-group">
+                        @foreach (var obj in subscribedObjects)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <NavLink class="nav-link justify-content-end" href="SpyInformationCompontent">@obj.Name - @obj.Address</NavLink>
+                                <button class="btn btn-danger" @onclick="() => RemoveObject(obj)">Remove</button>
+                            </li>
+                        }
+                        <div class="row">
+                            <div class="col-10">
+                            </div>
+                            <div class="col-1">
+                                <NavLink class="nav-link" href="Index">
+                                    <button class="btn btn-primary">Back</button>
+                                </NavLink>
+
+                            </div>
+                            <div class="col-1">
+                            </div>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+
+            
+        </div>
+    </div>
+</div>
+
+@code {
+    // todo fix backknappen tror den skal ha noget mere plads
+    public class ObjectModel
+    {
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public bool IsSelected { get; set; } // Checkbox state
+    }
+    // List of objects
+    private List<ObjectModel> subscribedObjects = new List<ObjectModel>
+    {
+        new ObjectModel { Name = "Object 1", Address = "Address 1" },
+        new ObjectModel { Name = "Object 2", Address = "Address 2" },
+        new ObjectModel { Name = "Object 3", Address = "Address 3" }
+    };
+
+    // New object details
+    private string newObjectName;
+    private string newObjectAddress;
+
+    // Selected address to track
+    private string selectedAddress;
+
+    // Selected object for information popup
+    private ObjectModel selectedObject;
+
+    // List of unique addresses
+    private List<string> objectAddresses => subscribedObjects.Select(obj => obj.Address).Distinct().ToList();
+
+    // Add a new object
+    private void AddObject()
+    {
+        subscribedObjects.Add(new ObjectModel { Name = newObjectName, Address = newObjectAddress });
+        newObjectName = "";
+        newObjectAddress = "";
+    }
+
+    // Remove an object
+    private void RemoveObject(ObjectModel obj)
+    {
+        subscribedObjects.Remove(obj);
+    }
+
+    // Show object information popup
+    private void ShowObjectPopup(ObjectModel obj)
+    {
+        selectedObject = obj;
+        JSRuntime.InvokeVoidAsync("$('#objectInfoModal').modal('show')");
+    }
+}

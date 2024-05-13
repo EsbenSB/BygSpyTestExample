@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BygSpyTestExample", "BygSpyTestExample\BygSpyTestExample.csproj", "{4E2A5F19-51B3-42C5-A52D-F9AA527D7D33}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BygSpy.specs", "BygSpySpecFlowProject\BygSpy.specs.csproj", "{E8EC91F7-19AE-41DD-B9A8-28730C13989D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BygSpy", "BygSpy\BygSpy.csproj", "{6AAEE070-8FF6-4C6D-9476-9A8AD77DCAE5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BygSpyServer", "BygSpyServer\BygSpyServer.csproj", "{BA6D4AAA-8015-462E-AAEB-6AFC9E42EBCE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BygSpyServerTest", "BygSpyServerTest\BygSpyServerTest.csproj", "{B0C14F44-ADCF-4F51-A693-357B4844E244}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BA6D4AAA-8015-462E-AAEB-6AFC9E42EBCE} = {BA6D4AAA-8015-462E-AAEB-6AFC9E42EBCE}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BygSpyServerWebAPI", "BygSpyServerWebAPI\BygSpyServerWebAPI.csproj", "{F06C5BA5-4FCC-4E30-B268-14032C41F4A8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BygSpyWebAPI", "BygSpyWebAPI\BygSpyWebAPI.csproj", "{DFF787F9-3361-419B-A25F-5E9711C41360}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E2A5F19-51B3-42C5-A52D-F9AA527D7D33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E2A5F19-51B3-42C5-A52D-F9AA527D7D33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E2A5F19-51B3-42C5-A52D-F9AA527D7D33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E2A5F19-51B3-42C5-A52D-F9AA527D7D33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8EC91F7-19AE-41DD-B9A8-28730C13989D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8EC91F7-19AE-41DD-B9A8-28730C13989D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8EC91F7-19AE-41DD-B9A8-28730C13989D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8EC91F7-19AE-41DD-B9A8-28730C13989D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AAEE070-8FF6-4C6D-9476-9A8AD77DCAE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AAEE070-8FF6-4C6D-9476-9A8AD77DCAE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AAEE070-8FF6-4C6D-9476-9A8AD77DCAE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AAEE070-8FF6-4C6D-9476-9A8AD77DCAE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA6D4AAA-8015-462E-AAEB-6AFC9E42EBCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA6D4AAA-8015-462E-AAEB-6AFC9E42EBCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA6D4AAA-8015-462E-AAEB-6AFC9E42EBCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA6D4AAA-8015-462E-AAEB-6AFC9E42EBCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0C14F44-ADCF-4F51-A693-357B4844E244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0C14F44-ADCF-4F51-A693-357B4844E244}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0C14F44-ADCF-4F51-A693-357B4844E244}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0C14F44-ADCF-4F51-A693-357B4844E244}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F06C5BA5-4FCC-4E30-B268-14032C41F4A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F06C5BA5-4FCC-4E30-B268-14032C41F4A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F06C5BA5-4FCC-4E30-B268-14032C41F4A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F06C5BA5-4FCC-4E30-B268-14032C41F4A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFF787F9-3361-419B-A25F-5E9711C41360}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFF787F9-3361-419B-A25F-5E9711C41360}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFF787F9-3361-419B-A25F-5E9711C41360}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFF787F9-3361-419B-A25F-5E9711C41360}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F273DEE7-19D8-420B-8BC4-B4C66D89BC9A}
+	EndGlobalSection
+EndGlobal

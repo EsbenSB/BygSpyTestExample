@@ -1,0 +1,43 @@
+trigger:
+  - master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - checkout: self
+
+  - script: |
+      sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C780D0BDB1A69C86
+      echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+      sudo apt-get update
+      sudo apt-get install -y k6
+    displayName: 'Install k6'
+
+  - script: |
+      wget -O loadtest.js https://raw.githubusercontent.com/MarcHedeby/BygSpyTestExample/master/BygSpyTestExample/loadtest.js
+      k6 run loadtest.js
+    displayName: 'Run load test'
+    continueOnError: true
+
+  - script: |
+      wget -O stress_test.js https://raw.githubusercontent.com/MarcHedeby/BygSpyTestExample/master/BygSpyTestExample/stress_test.js
+      k6 run stress_test.js
+    displayName: 'Run stress test'
+    continueOnError: true
+
+  - script: |
+      if grep -rq '"checks":\[\{.*"pass":false' .; then
+          echo "Test failed"
+          exit 1
+      fi
+    displayName: 'Check for failures'
+    continueOnError: true
+
+  - script: |
+      if [ $LASTEXITCODE -ne 0 ]; then
+          echo "Stopping workflow due to failure"
+          exit 1
+      fi
+    displayName: 'Stop workflow on failure'
+    continueOnError: true

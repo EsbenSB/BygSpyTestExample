@@ -1,0 +1,8 @@
+﻿namespace BygSpy.Models
+{
+    public class Spy
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
+}

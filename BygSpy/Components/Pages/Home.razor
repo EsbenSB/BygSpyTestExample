@@ -1,0 +1,98 @@
+﻿@page "/Index"
+
+@inject NavigationManager NavManager
+@using BygSpy.Components.Pages
+@using System
+
+<style>
+    /* Custom CSS for the notification bubble */
+    .notification-badge {
+        position: relative;
+    }
+
+    .badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        padding: 5px 8px;
+        border-radius: 50%;
+        background-color: red;
+        color: white;
+        font-size: 12px;
+    }
+</style>
+
+<h1 class="text-center">Button Grid</h1>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Button 1</h2>
+                    <button class="btn btn-primary" @onclick="() => ButtonClicked(1)">Ny Spy</button>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Button 2</h2>
+                    @* <button class="btn btn-primary" @onclick="() => ButtonClicked(2)">News</button> *@
+
+
+                    <NavLink class="nav-link" href="subscriptionPage">
+                        <button type="button" class="btn btn-primary notification-badge">
+                            News
+                            <span class="badge">3</span>
+
+                        </button>
+                    </NavLink>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Button 3</h2>
+                    <NavLink class="nav-link" href="loginPage">
+                        <button class="btn btn-primary" @onclick="() => ButtonClicked(3)">?????wat</button>
+                    </NavLink>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Button 4</h2>
+                    <NavLink class="nav-link" href="loginPage">
+                        <button class="btn btn-primary" @onclick="() => ButtonClicked(1)">No news</button>
+                    </NavLink>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+
+
+
+@code {
+    string WhatButton;
+
+
+    private async Task ButtonClicked(int button)
+    {
+        // WhatButton = button;
+        NavManager.NavigateTo("/home");
+
+
+        // Console.WriteLine($"Button {buttonNumber} clicked!");
+        // Handle button click event
+    }
+}

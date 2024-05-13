@@ -1,0 +1,63 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+trigger:
+  branches:
+    include:
+    - master
+
+pool:
+  vmImage: windows-latest
+
+variables:
+  buildPlatform: 'Any Cpu'
+  buildConfiguration: 'Release'
+  solution: '**/BygSpyTestExample.sln'
+  project: '**/BygSpyTestExample.csproj'
+
+steps:
+- task: NuGetToolInstaller@1
+  name: 'NugetToolInstaller'
+  displayName: 'Nuget Tool installer'
+  
+- task: NugetCommand@2
+  name: 'NugetToolRestore'
+  displayName: 'Nuget Tool restore'
+  inputs:
+    command: 'restore'
+    restoreSolution: '$(solution)'
+    feedsToUse: 'select'
+    
+- task: DotNetCoreCLI@2
+  name: 'test'
+  displayName: 'run test'
+  inputs:
+    command: 'test'
+    projects: '$(solution)'
+    arguments: '--configuration $(BuildConfiguration)'
+  continueOnError: false  # Continue to next step even if tests fail
+
+- script: |
+    if %ERRORLEVEL% neq 0 (
+      echo "Unit tests failed. Stopping workflow."
+      exit 1
+    )
+  displayName: 'Check Unit Test Results'
+
+- task: DotNetCoreCLI@2
+  name: 'publish'
+  displayName: 'run publish'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '$(project)'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1
+  name: 'PublishBuildArtifacts'
+  displayName: 'run PublishBuildArtifacts'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'AzureTestProject'
+    publishLocation: 'Container'

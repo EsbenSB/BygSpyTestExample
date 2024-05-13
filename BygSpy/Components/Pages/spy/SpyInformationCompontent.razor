@@ -1,0 +1,59 @@
+﻿@page "/SpyInformationCompontent"
+@using BygSpy.Models;
+@using System.Net.Http
+@using Newtonsoft.Json
+@inject HttpClient HttpClient
+
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    Object Information
+                </div>
+                <div class="card-body">
+                    <div class="row">
+            @*             <div class="col-12">
+                            <h5 class="card-title">@data.Name</h5>
+                            <p class="card-text">Address: @data.Address</p>
+                            <p class="card-text">Status: @data.status</p>
+                            <p class="card-text">VirkningFra: @data.VirkningFra</p>
+                        </div> *@
+                        
+                    <div class="row">
+                        <div class="col-11">
+                        </div>
+                        <div class="col-1">
+                            <NavLink class="nav-link" href="subscriptionPage">
+                                <button class="btn btn-primary">Back</button>
+                            </NavLink>
+
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    //Todo fix stylingen i navlink på alle navlinks det fucking grimt
+
+    // private List<string> objectAddresses => subscribedObjects.Select(obj => obj.Address).Distinct().ToList();
+
+    // private ObjectModel selectedObject;
+    // // List of objects
+
+
+    private SpyModel data = new SpyModel { Name = "Object 1", Address = "Address 1", status = 1 };
+    protected override async Task OnInitializedAsync()
+    {
+        // Make HTTP GET request to the backend API endpoint
+
+        // data = await HttpClient.GetFromJsonAsync<SpyModel[]>("/bbr/GetBBRStatusAndTime");
+        // data = await HttpClient.GetFromJsonAsync<SpyModel>("https://localhost:7166/bbr/GetBBRStatusAndTime");
+        // StateHasChanged();
+    }
+}
