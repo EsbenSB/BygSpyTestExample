@@ -24,13 +24,13 @@
                         </div>
                         <div class="form-group">
                             <label for="password">Password:</label>
-                            <input type="password" id="password" class="form-control" value="passwordValue" />
+                            <input type="password" id="password" class="form-control" value="@passwordValue" />
                         </div>
                         <div class="form-group">
                             <label for="phoneNumber">Phone number:</label>
-                            <input type="phoneNumber" id="phoneNumber" class="form-control" value="phoneNumberValue" />
+                            <input type="phoneNumber" id="phoneNumber" class="form-control" value="@phoneNumberValue" />
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">Create User</button>
+                        <button type="submit" class="btn btn-primary btn-block" onclick="@CreateUser">Create User</button>
                     </form>
                 </div>
             </div>
@@ -52,12 +52,12 @@
 
     protected async Task CreateUser()
     {
-        user.Id = new Guid();
+        user.Id = "string";
         user.Name = nameValue;
         user.Email = emailValue;
         user.Password = passwordValue;
         user.PhoneNumber = phoneNumberValue;
 
-        //await Http.SendJsonAsync(HttpMethod.Post, "/api/User/Create", user);
+        await Http.PostAsJsonAsync("api/users", user);
     }   
 }

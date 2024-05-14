@@ -8,7 +8,7 @@ namespace BygSpy.Models
 
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public Guid Id { get; set; }
+        public string? Id { get; set; }
 
         [BsonElement("Name")]
         public string Name { get; set; }
