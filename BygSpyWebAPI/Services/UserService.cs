@@ -11,7 +11,6 @@ namespace BygSpyWebAPI.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IMongoCollection<User> _userCollection;
 
         public UserService(IUserRepository userRepository)
         {
