@@ -27,7 +27,6 @@ namespace BygSpyWebAPI.Models
         [BsonElement("PhoneNumber")]
         [JsonProperty("PhoneNumber")] // Match the backend key "PhoneNumber"
         public string PhoneNumber { get; set; }
-
     }
 }
 
