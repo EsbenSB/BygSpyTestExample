@@ -11,7 +11,5 @@ namespace BygSpyWebAPI.Models
 
         [BsonElement("Name")]
         public string Name { get; set; }
-        [BsonElement("User")]
-        public string User { get; set; }
     }
 }

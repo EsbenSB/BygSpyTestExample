@@ -6,7 +6,6 @@
         public string Address { get; set; }
         public int status { get; set; }
         public DateTime VirkningFra { get; set; }
-        public string User { get; set; }
 
     }//
 }

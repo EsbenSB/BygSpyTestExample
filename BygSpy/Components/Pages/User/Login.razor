@@ -54,6 +54,8 @@
             var users = await GetUsers();
             if (users.Any(user => user.Email == email && user.Password == password))
             {
+                NavManager.NavigateTo("/Index");
+            }
 
                 //todo tilføj en session service der kan håndter log//
                 NavManager.NavigateTo($"/Index?Username={users.FirstOrDefault(user => user.Email == email && user.Password == password).Name.ToString()}");
