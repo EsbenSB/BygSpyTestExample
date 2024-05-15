@@ -47,6 +47,11 @@ namespace BygSpyWebAPI.Services
             return result;
         }
 
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _userRepository.GetUserByEmailAsync(email);
+        }
+
         public async Task CreateUserAsync(User newUser)
         {
             try

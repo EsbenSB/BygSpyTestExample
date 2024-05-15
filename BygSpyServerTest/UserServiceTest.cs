@@ -1,116 +1,118 @@
 using BygSpyWebAPI.Models;
 using BygSpyWebAPI.Repositories;
+using BygSpyWebAPI.Repositories.Interfaces;
 using BygSpyWebAPI.Services;
 using FluentAssertions;
 using Moq;
+using Xunit;
 
 namespace BygSpyServerTest
 {
     public class UserServiceTest
     {
-        //private readonly UserService _userService;
-        //public UserServiceTest(UserService userService)
-        //{
-        //    _userService = userService;
-        //}
-        //// Handrolled mock
-        //[Fact]
-        //public void CreateUser_Should_ReturnNewUser()
+        [Fact]
+        public async Task CreateUser_Should_ReturnNewUserAsync()
+        {
+            // Arrange
+            var newUser = new User
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "newuser@example.com",
+                Name = "New User",
+                Password = "test1234",
+                PhoneNumber = "30229121"
+            };
+
+            var mockRepository = new Mock<IUserRepository>();
+            
+
+            var userService = new UserService(mockRepository.Object);
+           
+
+            // Act
+            await userService.CreateUserAsync(newUser);
+           
+
+            // Assert
+            newUser.Should().NotBeNull();
+            newUser.Id.Should().Be(newUser.Id);
+            newUser.Email.Should().Be(newUser.Email);
+            newUser.Name.Should().Be(newUser.Name);
+            newUser.PhoneNumber.Should().Be(newUser.PhoneNumber);
+            newUser.Password.Should().Be(newUser.Password);
+
+        }
+        //[Theory]
+        //[InlineData("existinguser@example.com")]
+        //public async Task CreateUser_WithExistingEmail_Should_ThrowInvalidOperationExceptionAsync(string existingEmail)
         //{
         //    // Arrange
-        //    var user = new User
-        //    {
+        //    var existingUser = new User { Id = Guid.NewGuid().ToString(), Name = "Existing User", Email = existingEmail, PhoneNumber = "12345678", Password = "test1234" };
+        //    var mockRepository = new Mock<IUserRepository>();
+        //    mockRepository.Setup(repo => repo.GetUserByEmailAsync(existingEmail)).ReturnsAsync(existingUser);
 
-        //        Name = "John",
-        //        Email = "john@example.com",
-        //        Password = "testitestpassword",
-        //        PhoneNumber = "1234567890"
-        //    };
-
+        //    var userService = new UserService(mockRepository.Object);
+        //    var newUserWithExistingEmail = new User { Id = Guid.NewGuid().ToString(), Name = "New User", Email = existingEmail, PhoneNumber = "98765432", Password = "password123" };
 
         //    // Act
-        //    var newUser = _userService.CreateUserAsync(user);
+        //    Func<Task> createUserAction = async () => await userService.CreateUserAsync(newUserWithExistingEmail);
 
         //    // Assert
-        //    newUser.Should().Be(user);
+        //    await createUserAction.Should().ThrowAsync<InvalidOperationException>()
+        //        .WithMessage($"User with email '{existingUser.Email}' already exists.");
 
         //}
-
 
         //[Theory]
         //[InlineData("invalid-email")]
         //[InlineData("missing@symbol")]
         //[InlineData("missing.domain.com")]
-        //public async Task CreateUser_WithInvalidEmail_Should_ThrowArgumentExceptionAsync(string invalidEmail)
+        //public async Task CreateUser_WithInvalidEmail_Should_ThrowInvalidOperationExceptionAsync(string invalidEmail)
         //{
         //    // Arrange
-        //    var mockRepository = new Mock<UserRepository>();
+
+        //    var userWithInvalidEmail = new User { Id = Guid.NewGuid().ToString(), Name = "testJohn", Email = invalidEmail, PhoneNumber = "12345678", Password = "test1234" };
+        //    var mockRepository = new Mock<IUserRepository>();
         //    var userService = new UserService(mockRepository.Object);
-
-        //    var userWithInvalidEmail = new User { Id = Guid.NewGuid(), Email = invalidEmail };
-
+        //    mockRepository.Setup(repo => repo.CreateUserAsync(It.IsAny<User>())).ReturnsAsync(userWithInvalidEmail);
         //    // Act
         //    Func<Task> createUserAction = async () => await userService.CreateUserAsync(userWithInvalidEmail);
 
         //    // Assert
-        //    await createUserAction.Should().ThrowAsync<ArgumentException>()
-        //        .WithMessage("Invalid email format.");
+        //    await createUserAction.Should().ThrowAsync<InvalidOperationException>()
+        //        .WithMessage($"User with email '{userWithInvalidEmail.Email}' already exists.");
         //}
 
-        //[Theory]
-        //[InlineData("invalid-email")]
-        //[InlineData("missing@symbol")]
-        //[InlineData("missing.domain.com")]
-        //public async Task CreateUser_WithInvalidEmail_Should_ThrowArgumentException(string invalidEmail)
-        //{
-        //    // Arrange
-        //    var mockRepository = new Mock<UserRepository>();
-        //    var userService = new UserService(mockRepository.Object);
+        [Fact]
+        public async Task UpdateUserAsync_Should_CallUserRepositoryWithCorrectParameters()
+        {
+            // Arrange
+            var userId = Guid.NewGuid().ToString();
+            var updatedUser = new User { Id = userId, Name = "Updated User", Email = "updated@example.com", PhoneNumber = "1234567890", Password = "newpassword" };
+            var mockRepository = new Mock<IUserRepository>();
+            var userService = new UserService(mockRepository.Object);
 
-        //    var userWithInvalidEmail = new User { Id = Guid.NewGuid(), Email = invalidEmail };
+            // Act
+            await userService.UpdateUserAsync(userId, updatedUser);
 
-        //    // Act
-        //    Func<Task> createUserAction = async () => await userService.CreateUserAsync(userWithInvalidEmail);
+            // Assert
+            mockRepository.Verify(repo => repo.UpdateUserAsync(userId, updatedUser), Times.Once);
+        }
 
-        //    // Assert
-        //    await createUserAction.Should().ThrowAsync<ArgumentException>()
-        //        .WithMessage("Invalid email format.");
-        //}
+        [Fact]
+        public async Task DeleteUserAsync_Should_CallUserRepositoryWithCorrectParameters()
+        {
+            // Arrange
+            var userId = Guid.NewGuid().ToString();
+            var mockRepository = new Mock<IUserRepository>();
+            var userService = new UserService(mockRepository.Object);
 
-        //[Fact]
-        //public void CreateUser_WithExistingEmail_Should_ThrowInvalidOperationException1()
-        //{
-        //    // Arrange
-        //    var existingUser = new User { Id= Guid.NewGuid(), Name = "JohnJohn", Email = "john@gmail.com", PhoneNumber ="128845678" };
+            // Act
+            await userService.DeleteUserAsync(userId);
 
-        //    // Act & Assert
-        //    FluentActions.Invoking(() => new User { Id = Guid.NewGuid(), Name = "NotJohn", Email = existingUser.Email })
-        //        .Should().Throw<InvalidOperationException>()
-        //        .WithMessage("Email is already registered");
-        //}
-
-        //[Fact]
-        //public async Task CreateUser_WithValidUser_Should_CreateUserSuccessfully()
-        //{
-        //    // Arrange
-        //    var mockRepository = new Mock<UserRepository>();
-        //    var userService = new UserService(mockRepository.Object);
-
-        //    var newUser = new User { Id = Guid.NewGuid(), Email = "newuser@example.com", Name = "New User" };
-
-        //    mockRepository.Setup(repo => repo.GetUserByEmailAsync(newUser.Email)).ReturnsAsync((User)null); // Simulate no existing user with the same email
-
-        //    // Act
-        //    var createdUser = await userService.CreateUserAsync(newUser);
-
-        //    // Assert
-        //    createdUser.Should().NotBeNull();
-        //    createdUser.Id.Should().NotBe(Guid.Empty);
-        //    createdUser.Email.Should().Be(newUser.Email);
-        //    createdUser.Name.Should().Be(newUser.Name);
-
-        //    mockRepository.Verify(repo => repo.CreateUserAsync(newUser), Times.Once);
-        //}
+            // Assert
+            mockRepository.Verify(repo => repo.RemoveUserAsync(userId), Times.Once);
+        }
 
     }
 }

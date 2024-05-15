@@ -8,34 +8,36 @@ using BygSpyWebAPI.Repositories;
 using Moq;
 using BygSpyWebAPI.Services;
 using FluentAssertions;
+using BygSpyWebAPI.Repositories.Interfaces;
 
 namespace BygSpyServerTest
 {
     public class SpyServiceTest
     {
-        //    private readonly SpyService _service;
-        //    public SpyServiceTest(SpyService service)
+        
+        //[Fact]
+        //public void CreateSpy_Should_ReturnNewSpy()
+        //{
+        //    // Arrange
+        //    var spy = new Spy
         //    {
+        //        Name = "TestSpy"
+        //    };
+        //    var mockRepository = new Mock<ISpyRepository>();
 
-        //        _service = service;
 
-        //    }
-        //    [Fact]
-        //    public void CreateSpy_Should_ReturnNewSpy()
-        //    {
-        //        // Arrange
-        //        var spy = new Spy
-        //        {
-        //            Name = "TestSpy"
-        //        };
+        //    var spyService = new SpyService(mockRepository.Object);
 
-        //        // Act
-        //        var newSpy = _service.CreateSpyAsync(spy);
 
-        //        // Assert
-        //        newSpy.Should().Be(spy);
+        //    // Act
+        //    await spyService.CreateSpyAsync(newSpy);
+        //    // Act
+        //    var newSpy = service.CreateSpyAsync(spy);
 
-        //    }
+        //    // Assert
+        //    newSpy.Should().Be(spy);
+
+
+        }
         //}
     }
-}
