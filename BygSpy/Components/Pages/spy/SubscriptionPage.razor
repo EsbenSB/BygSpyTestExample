@@ -114,10 +114,18 @@
     //     subscribedObjects.Remove(obj);
     // }
 
-    // // Show object information popup
-    // private void ShowObjectPopup(ObjectModel obj)
-    // {
-    //     selectedObject = obj;
-    //     // JSRuntime.InvokeVoidAsync("$('#objectInfoModal').modal('show')");
-    // }
+                return filteredSpies;
+            }//
+            else
+            {
+                Console.WriteLine($"Failed to retrieve spies. Status code: {response.StatusCode}");
+                return new List<SpyModel>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            return new List<SpyModel>();
+        }
+    }
 }

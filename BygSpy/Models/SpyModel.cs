@@ -7,5 +7,5 @@
         public int status { get; set; }
         public DateTime VirkningFra { get; set; }
 
-    }
+    }//
 }
