@@ -30,9 +30,11 @@ namespace BygSpyWebAPI.Controllers
         }
 
         [HttpPost]
-        public void Post([FromBody] string adress)
+        public void Post([FromBody] SpyingObjectTransferModel spyObjectTransfer)
         {
             SpyingObject spyObject = new SpyingObject();
+            spyObject.SpyName = spyObjectTransfer.SpyName;
+            spyObject.newobjectName = spyObjectTransfer.newobjectName;
             //først send en adresse
             //derefter få adresse id
             //få jordstykke jordstykke
@@ -41,7 +43,9 @@ namespace BygSpyWebAPI.Controllers
             //1
             SpyingObjectTempEntity spyingObjectTempEntity = new SpyingObjectTempEntity();
 
-            spyingObjectTempEntity = _spyingObjectService.GetAddressId(adress).Result;
+           
+
+            spyingObjectTempEntity = _spyingObjectService.GetAddressId(spyObjectTransfer.adress).Result;
             //2
             var jordstykke = _spyingObjectService.GetJordstykkeFromAddressId(spyingObjectTempEntity.addressId);
             //3

@@ -51,12 +51,14 @@
 
                     @foreach (var spy in spies)
                     {
-                        <NavLink class="nav-link" href="subscriptionPage">
-                            <button type="button" class="btn btn-primary notification-badge">
+
+                        <button @onclick="async () => await EnterSpyObject(spy)" type="button" class="btn btn-primary notification-badge">
                                 @spy.Name
                                 <span class="badge">3</span>
                             </button>
-                        </NavLink>
+                            <br />
+                        <br />
+               
                     }
 
                 </div>
@@ -180,4 +182,17 @@
         }
     }
 
+
+
+    protected async Task EnterSpyObject(Spy spyObject)
+    {
+        try
+        {
+            NavManager.NavigateTo($"/subscriptionPage?spyObject={spyObject.Name}");
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
 }

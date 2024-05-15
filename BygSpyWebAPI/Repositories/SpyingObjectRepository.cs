@@ -13,7 +13,7 @@ namespace BygSpyWebAPI.Repositories
         public SpyingObjectRepository(MongoDb.BygSpyDBContext dbContext)
         {
             //todo ændre nedenstående senere
-            _spyingObjectCollection = (IMongoCollection<SpyingObject>?)dbContext.spy;
+            _spyingObjectCollection = (IMongoCollection<SpyingObject>?)dbContext.spyobject;
         }
 
         public async Task CreateSpyingObjectAsync(SpyingObject spyingObject)
