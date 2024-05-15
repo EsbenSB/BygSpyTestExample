@@ -10,7 +10,6 @@
 @using BygSpy.Models
 @using System.Text.Json
 @using System.Text
-@using Microsoft.JSInterop
 @inject IHttpClientFactory ClientFactory
 
 <style>
@@ -133,7 +132,6 @@
             var spy = new Spy
                 {
                     Name = SpyName,
-                    User = Username
                 };
 
             var client = ClientFactory.CreateClient();
