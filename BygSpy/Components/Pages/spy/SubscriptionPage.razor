@@ -166,7 +166,7 @@
                 var filteredSpies = spies.Where(spy => spy.User == Username).ToList();
 
                 return filteredSpies;
-            }
+            }//
             else
             {
                 Console.WriteLine($"Failed to retrieve spies. Status code: {response.StatusCode}");

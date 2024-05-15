@@ -8,5 +8,5 @@
         public DateTime VirkningFra { get; set; }
         public string User { get; set; }
 
-    }
+    }//
 }
