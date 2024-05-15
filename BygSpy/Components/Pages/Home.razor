@@ -13,7 +13,6 @@
 @using Microsoft.JSInterop
 @inject IHttpClientFactory ClientFactory
 
-
 <style>
     /* Custom CSS for the notification bubble */
     .notification-badge {
@@ -48,18 +47,12 @@
             <div class="card">
                 <div class="card-body">
                     <h2 class="card-title">Button 2</h2>
-                    @if (loading == true)
-                    {
                     @foreach (var spy in spies)
                     {
-                    <NavLink class="nav-link" href="subscriptionPage">
-                        <button type="button" class="btn btn-primary notification-badge">
-                                @spy.Name
+                        <button type="button" @onclick="() => NavigateSubscriptionPage(spy)" class="btn btn-primary notification-badge">
+                            @spy.Name
                             <span class="badge">3</span>
                         </button>
-                    </NavLink>
-
-                        }
                     }
                 </div>
             </div>
@@ -85,7 +78,6 @@
                 </div>
             </div>
             <div class="modal-footer">
-               
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseModal">Close</button>
                 <button type="button" class="btn btn-primary" @onclick="AddSpy">Add</button>
             </div>
@@ -114,10 +106,13 @@
             Username = value;
         }
         spies = await GetSpies();
-
-        loading = true;
+        StateHasChanged();
     }
 
+    private async Task NavigateSubscriptionPage(Spy spy)
+    {
+        NavManager.NavigateTo($"subscriptionPage?Username={spy.Name}");
+    }
 
 
     private void ShowAddSpyModal()
@@ -147,7 +142,6 @@
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await client.PostAsync("https://localhost:7299/api/spy", content);
-
         }
         catch (Exception ex)
         {
@@ -156,6 +150,7 @@
 
         CloseModal();
     }
+
     protected async Task<List<Spy>> GetSpies()
     {
         try
@@ -173,6 +168,7 @@
 
                 // Filter out spies whose Name is not equal to Username
                 var filteredSpies = spies.Where(spy => spy.User == Username).ToList();
+
                 return filteredSpies;
             }
             else
@@ -187,5 +183,4 @@
             return new List<Spy>();
         }
     }
-
 }

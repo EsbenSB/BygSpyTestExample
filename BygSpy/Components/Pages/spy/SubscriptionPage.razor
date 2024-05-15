@@ -1,7 +1,12 @@
-﻿
-@page "/subscriptionPage"
-@inject IJSRuntime JSRuntime
+﻿@page "/subscriptionPage"
+@using BygSpy.Models;
 
+@using System.Text.Json
+@using System.Text
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavManager
+@inject IHttpClientFactory ClientFactory
 <div class="container">
     <div class="row justify-content-center">
         <!-- Column for adding new object and configuration -->
@@ -13,7 +18,7 @@
                     <form>
                         <div class="form-group">
                             <label>Object Name:</label>
-                            <input type="text"  class="form-control" @bind="newObjectName" />
+                            <input type="text" class="form-control" @bind="newObjectName" />
                         </div>
                         <div class="form-group">
                             <label>Address:</label>
@@ -32,8 +37,6 @@
                             <label class="form-check-label" for="@($"checkbox-{obj.Name}")">@obj.Name</label>
                         </div>
                     }
-
-               
                 </div>
             </div>
         </div>
@@ -46,8 +49,8 @@
                         @foreach (var obj in subscribedObjects)
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <NavLink class="nav-link justify-content-end" href="SpyInformationCompontent">@obj.Name - @obj.Address</NavLink>
-                                <button class="btn btn-danger" >Remove</button>
+                                <NavLink class="nav-link justify-content-end" href="@GetSpyInformationComponentUrl(obj.Name)">@obj.Name - @obj.Address</NavLink>
+                                <button class="btn btn-danger">Remove</button>
                             </li>
                         }
                         <div class="row">
@@ -57,7 +60,6 @@
                                 <NavLink class="nav-link" href="Index">
                                     <button class="btn btn-primary">Back</button>
                                 </NavLink>
-
                             </div>
                             <div class="col-1">
                             </div>
@@ -65,20 +67,37 @@
                     </ul>
                 </div>
             </div>
-
-            
         </div>
     </div>
 </div>
 
 @code {
-    // todo fix backknappen tror den skal ha noget mere plads
+    public string Username { get; set; }
+
+
+    protected override async void OnInitialized()
+    {
+        // Retrieve the value of the query parameter from the NavigationManager
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        var parameterName = "Username";
+
+        // Check if the query parameters contain the desired parameter
+        if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query).TryGetValue(parameterName, out var value))
+        {
+            // Assign the value to the parameterValue variable
+            Username = value;
+        }
+        await GetSpies();
+        StateHasChanged();
+    }
+
     public class ObjectModel
     {
         public string Name { get; set; }
         public string Address { get; set; }
         public bool IsSelected { get; set; } // Checkbox state
     }
+
     // List of objects
     private List<ObjectModel> subscribedObjects = new List<ObjectModel>
     {
@@ -100,24 +119,64 @@
     // List of unique addresses
     private List<string> objectAddresses => subscribedObjects.Select(obj => obj.Address).Distinct().ToList();
 
-    // // Add a new object
-    // private void AddObject()
-    // {
-    //     subscribedObjects.Add(new ObjectModel { Name = newObjectName, Address = newObjectAddress });
-    //     newObjectName = "";
-    //     newObjectAddress = "";
-    // }
+    // Get URL for Spy Information Component
+    private string GetSpyInformationComponentUrl(string spyName)
+    {
+        return $"subscriptionPage/{spyName}";
+    }
 
-    // // Remove an object
-    // private void RemoveObject(ObjectModel obj)
-    // {
-    //     subscribedObjects.Remove(obj);
-    // }
+    // Add a new object
+    private void AddObject()
+    {
+        subscribedObjects.Add(new ObjectModel { Name = newObjectName, Address = newObjectAddress });
+        newObjectName = "";
+        newObjectAddress = "";
+    }
 
-    // // Show object information popup
-    // private void ShowObjectPopup(ObjectModel obj)
-    // {
-    //     selectedObject = obj;
-    //     // JSRuntime.InvokeVoidAsync("$('#objectInfoModal').modal('show')");
-    // }
+    // Remove an object
+    private void RemoveObject(ObjectModel obj)
+    {
+        subscribedObjects.Remove(obj);
+    }
+
+    // Show object information popup
+    private void ShowObjectPopup(ObjectModel obj)
+    {
+        selectedObject = obj;
+        // JSRuntime.InvokeVoidAsync("$('#objectInfoModal').modal('show')");
+    }
+
+
+    protected async Task<List<SpyModel>> GetSpies()
+    {
+        try
+        {
+            var client = ClientFactory.CreateClient();
+            var response = await client.GetAsync("https://localhost:7299/api/spyingobject");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var spies = JsonSerializer.Deserialize<List<SpyModel>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                // Filter out spies whose Name is not equal to Username
+                var filteredSpies = spies.Where(spy => spy.User == Username).ToList();
+
+                return filteredSpies;
+            }
+            else
+            {
+                Console.WriteLine($"Failed to retrieve spies. Status code: {response.StatusCode}");
+                return new List<SpyModel>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            return new List<SpyModel>();
+        }
+    }
 }
