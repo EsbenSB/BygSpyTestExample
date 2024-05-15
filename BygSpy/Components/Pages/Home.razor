@@ -48,19 +48,17 @@
             <div class="card">
                 <div class="card-body">
                     <h2 class="card-title">Button 2</h2>
-                    @if (loading == true)
-                    {
+
                     @foreach (var spy in spies)
                     {
-                    <NavLink class="nav-link" href="subscriptionPage">
-                        <button type="button" class="btn btn-primary notification-badge">
+                        <NavLink class="nav-link" href="subscriptionPage">
+                            <button type="button" class="btn btn-primary notification-badge">
                                 @spy.Name
-                            <span class="badge">3</span>
-                        </button>
-                    </NavLink>
-
-                        }
+                                <span class="badge">3</span>
+                            </button>
+                        </NavLink>
                     }
+
                 </div>
             </div>
         </div>
@@ -85,9 +83,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-               
+
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="CloseModal">Close</button>
-                <button type="button" class="btn btn-primary" @onclick="AddSpy">Add</button>
+                <button type="button" class="btn btn-primary" @onclick="async () => await AddSpy()">Add</button>
             </div>
         </div>
     </div>
@@ -98,27 +96,19 @@
     string SpyName = "";
     public BygSpy.Models.User currentUser;
     public List<Spy> spies = new List<Spy>();
-    bool loading = false;
     private string Username;
 
-    protected override async void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        // Retrieve the value of the query parameter from the NavigationManager
         var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
         var parameterName = "Username";
 
-        // Check if the query parameters contain the desired parameter
         if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query).TryGetValue(parameterName, out var value))
         {
-            // Assign the value to the parameterValue variable
             Username = value;
+            await GetSpies();
         }
-        spies = await GetSpies();
-
-        loading = true;
     }
-
-
 
     private void ShowAddSpyModal()
     {
@@ -137,6 +127,7 @@
         {
             var spy = new Spy
                 {
+                    Id = "ThisIsBecauseIdAtBackEndNeed42CharactersToWorkSoIWriteThisToMakeItWorkPlzWorkGodDammit",
                     Name = SpyName,
                     User = Username
                 };
@@ -147,7 +138,12 @@
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await client.PostAsync("https://localhost:7299/api/spy", content);
+            if (response.IsSuccessStatusCode)
+            {
 
+                StateHasChanged();
+                await GetSpies();
+            }
         }
         catch (Exception ex)
         {
@@ -156,7 +152,7 @@
 
         CloseModal();
     }
-    protected async Task<List<Spy>> GetSpies()
+    protected async Task GetSpies()
     {
         try
         {
@@ -166,25 +162,21 @@
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var spies = JsonSerializer.Deserialize<List<Spy>>(json, new JsonSerializerOptions
+                var spiesList = JsonSerializer.Deserialize<List<Spy>>(json, new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });
 
-                // Filter out spies whose Name is not equal to Username
-                var filteredSpies = spies.Where(spy => spy.User == Username).ToList();
-                return filteredSpies;
+                spies = spiesList.Where(spy => spy.User == Username).ToList();
             }
             else
             {
                 Console.WriteLine($"Failed to retrieve spies. Status code: {response.StatusCode}");
-                return new List<Spy>();
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"An error occurred: {ex.Message}");
-            return new List<Spy>();
         }
     }
 

@@ -34,6 +34,7 @@ namespace BygSpyWebAPI.Controllers
         [HttpPost]
         public void PostSpy([FromBody] Spy Spy)
         {
+
             _spyService.PostSpy(Spy);
         }
 
