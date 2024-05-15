@@ -20,6 +20,9 @@ namespace BygSpyWebAPI.Repositories
         public async Task<User?> GetUserAsync(string id) =>
             await _userCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
+        public async Task<User?> GetUserByEmailAsync(string existingEmail) =>
+           await _userCollection.Find(x => x.Email == existingEmail).FirstOrDefaultAsync();
+       
         public async Task CreateUserAsync(User newUser) =>
             await _userCollection.InsertOneAsync(newUser);
 
@@ -28,6 +31,9 @@ namespace BygSpyWebAPI.Repositories
 
         public async Task RemoveUserAsync(string id) =>
             await _userCollection.DeleteOneAsync(x => x.Id == id);
+
+       
+        
 
         //public async Task CreateUserAcync(User user)
         //{

@@ -36,9 +36,17 @@ namespace BygSpyWebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(User newUser)
+        public async Task<IActionResult> Post(string email, User newUser)
         {
+            var user = await _userService.GetUserByEmailAsync(email);
+
+            if (user is not null)
+            {
+                throw new InvalidOperationException($"User with email '{user.Email}' already exists.");
+            }
+
             await _userService.CreateUserAsync(newUser);
+            
 
             return CreatedAtAction(nameof(Get), new { id = newUser.Id }, newUser);
         }
