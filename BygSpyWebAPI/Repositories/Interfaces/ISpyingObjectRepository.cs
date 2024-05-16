@@ -5,9 +5,9 @@ namespace BygSpyWebAPI.Repositories.Interfaces
     public interface ISpyingObjectRepository
     {
         Task CreateSpyingObjectAsync(SpyingObject spyingObject);
-        Task DeleteSpyingObjectAsync(string bfe);
+        Task DeleteSpyingObjectAsync(string id);
         Task<List<SpyingObject>> GetAllSpyingObjectAsync();
-        Task<SpyingObject> GetSpyingObjectByIdAsync(string bfe);
+        Task<SpyingObject> GetSpyingObjectByIdAsync(string id);
         Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject);
     }
 }

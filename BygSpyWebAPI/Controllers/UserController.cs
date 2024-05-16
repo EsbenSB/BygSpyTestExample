@@ -36,9 +36,9 @@ namespace BygSpyWebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(string email, User newUser)
+        public async Task<IActionResult> Post(User newUser)
         {
-            var user = await _userService.GetUserByEmailAsync(email);
+            var user = await _userService.GetUserByEmailAsync(newUser.Email);
 
             if (user is not null)
             {

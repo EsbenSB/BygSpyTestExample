@@ -32,7 +32,7 @@
                             </div>
                             <div class="col justify-content-end">
 
-                                <NavLink class="nav-link justify-content-end" href="createUserPage"><button class="btn btn-primary btn-block justify-content-end">Create User</button></NavLink>
+                                <NavLink class="nav-link justify-content-end" href="newUser"><button class="btn btn-primary btn-block justify-content-end">Create User</button></NavLink>
                             </div>
                         </div>
                     </div>
@@ -56,7 +56,7 @@
             {
 
                 //todo tilføj en session service der kan håndter log
-                NavManager.NavigateTo($"/Index?Username={users.FirstOrDefault(user => user.Email == email && user.Password == password).Name.ToString()}");
+                NavManager.NavigateTo($"/Index?Email={users.FirstOrDefault(user => user.Email == email && user.Password == password).Email.ToString()}");
             }
 
         }

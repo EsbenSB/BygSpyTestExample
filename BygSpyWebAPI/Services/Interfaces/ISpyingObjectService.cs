@@ -11,9 +11,9 @@ namespace BygSpyWebAPI.Services.Interfaces
         Task<int> GetGrundFromBfe(int bfe);
         Task<SpyingObject> MapToSpyingObject(SpyingObjectTempEntity spyingObjectTempEntity, SpyingObject spyObject);
         Task PostSpyingObject(SpyingObject spyObject);
-        Task DeleteSpyingObject(string bfe);
+        Task DeleteSpyingObject(string id);
         Task<List<SpyingObject>> GetAllSpyingObjectAsync();
-        Task<SpyingObject> GetSpyingObjectByIdAsync(string bfe);
+        Task<SpyingObject> GetSpyingObjectByIdAsync(string id);
         Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject);
     }
 }

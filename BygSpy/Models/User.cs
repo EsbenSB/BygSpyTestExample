@@ -13,19 +13,19 @@ namespace BygSpy.Models
         public string? Id { get; set; }
 
         [BsonElement("Name")]
-        [JsonProperty("Name")] // Match the backend key "Name"
-        public string Name { get; set; }
+        [JsonProperty("Name")]
+        public string Name { get; set; } = null!;
 
         [BsonElement("Email")]
-        [JsonProperty("Email")] // Match the backend key "Email"
-        public string Email { get; set; }
+        [JsonProperty("Email")]
+        public string Email { get; set; } = null!;
 
         [BsonElement("Password")]
-        [JsonProperty("Password")] // Match the backend key "Password"
-        public string Password { get; set; }
+        [JsonProperty("Password")]
+        public string Password { get; set; } = null!;
 
         [BsonElement("PhoneNumber")]
-        [JsonProperty("PhoneNumber")] // Match the backend key "PhoneNumber"
-        public string PhoneNumber { get; set; }
+        [JsonProperty("PhoneNumber")]
+        public string PhoneNumber { get; set; } = null!;
     }
 }

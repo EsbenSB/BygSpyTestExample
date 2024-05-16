@@ -19,8 +19,8 @@ namespace BygSpyWebAPI.Models
         [BsonElement("City")]
         public string City { get; set; }
 
-        [BsonElement("SpyName")]
-        public string SpyName { get; set; }
+        [BsonElement("spyId")]
+        public string spyId { get; set; }
 
         [BsonElement("newobjectName")]
         public string newobjectName { get; set; }

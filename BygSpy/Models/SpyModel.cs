@@ -17,7 +17,7 @@ namespace BygSpy.Models
         [BsonElement("adress")]
         public string adress { get; set; }
 
-        [BsonElement("SpyName")]
-        public string SpyName { get; set; }
+        [BsonElement("spyId")]
+        public string spyId { get; set; }
     }
 }

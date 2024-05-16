@@ -98,16 +98,18 @@
     string SpyName = "";
     public BygSpy.Models.User currentUser;
     public List<Spy> spies = new List<Spy>();
-    private string Username;
+
+    public List<SpyModel> spyObjects = new List<SpyModel>();
+    private string Email;
 
     protected override async Task OnInitializedAsync()
     {
         var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
-        var parameterName = "Username";
+        var parameterName = "Email";
 
         if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query).TryGetValue(parameterName, out var value))
         {
-            Username = value;
+            Email = value;
             await GetSpies();
         }
     }
@@ -131,7 +133,7 @@
                 {
                     Id = "ThisIsBecauseIdAtBackEndNeed42CharactersToWorkSoIWriteThisToMakeItWorkPlzWorkGodDammit",
                     Name = SpyName,
-                    User = Username
+                    Creator_Email = Email
                 };
 
             var client = ClientFactory.CreateClient();
@@ -169,7 +171,7 @@
                         PropertyNameCaseInsensitive = true
                     });
 
-                spies = spiesList.Where(spy => spy.User == Username).ToList();
+                spies = spiesList.Where(spy => spy.Creator_Email == Email).ToList();
             }
             else
             {
@@ -188,7 +190,7 @@
     {
         try
         {
-            NavManager.NavigateTo($"/subscriptionPage?spyObject={spyObject.Name}");
+            NavManager.NavigateTo($"/subscriptionPage?spyId={spyObject.Id}");
         }
         catch (Exception ex)
         {

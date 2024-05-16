@@ -196,11 +196,11 @@ namespace BygSpyWebAPI.Services
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
-        public async Task DeleteSpyingObject(string bfe)
+        public async Task DeleteSpyingObject(string id)
         {
             try
             {
-                await _spyingObjectRepository.DeleteSpyingObjectAsync(bfe);
+                await _spyingObjectRepository.DeleteSpyingObjectAsync(id);
             }
             catch (Exception ex)
             {
@@ -220,9 +220,9 @@ namespace BygSpyWebAPI.Services
             return null;
         }
 
-        public async Task<SpyingObject> GetSpyingObjectByIdAsync(string bfe) 
+        public async Task<SpyingObject> GetSpyingObjectByIdAsync(string id) 
         {
-         var result = await _spyingObjectRepository.GetSpyingObjectByIdAsync(bfe);
+         var result = await _spyingObjectRepository.GetSpyingObjectByIdAsync(id);
             return result;
         }
         public async Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject)

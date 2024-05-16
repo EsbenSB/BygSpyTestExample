@@ -36,20 +36,20 @@ namespace BygSpyWebAPI.Repositories
             return null;
 
         }
-        public async Task<SpyingObject> GetSpyingObjectByIdAsync(string bfe)
+        public async Task<SpyingObject> GetSpyingObjectByIdAsync(string id)
         {
-            var filter = Builders<SpyingObject>.Filter.Eq("BFE", bfe);
+            var filter = Builders<SpyingObject>.Filter.Eq("_id", id);
             var result = await _spyingObjectCollection.Find(filter).FirstOrDefaultAsync();
             return result;
         }
-        public async Task DeleteSpyingObjectAsync(string bfe)
+        public async Task DeleteSpyingObjectAsync(string id)
         {
-            var filter = Builders<SpyingObject>.Filter.Eq("BFE", bfe);
+            var filter = Builders<SpyingObject>.Filter.Eq("_id", id);
             var result = await _spyingObjectCollection.DeleteOneAsync(filter);
 
             if (result.DeletedCount == 0)
             {
-                throw new InvalidOperationException($"SpyingObject with ID {bfe} not found.");
+                throw new InvalidOperationException($"SpyingObject with ID {id} not found.");
             }
         }
         public async Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject)
