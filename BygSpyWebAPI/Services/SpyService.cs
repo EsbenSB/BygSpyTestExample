@@ -8,12 +8,10 @@ namespace BygSpyWebAPI.Services
 {
     public class SpyService : ISpyService
     {
-        private readonly DatabaseSettings _databaseSettings;
         private readonly ISpyRepository _spyRepo;
 
-        public SpyService(DatabaseSettings databaseSettings, ISpyRepository spyRepo)
+        public SpyService( ISpyRepository spyRepo)
         {
-            _databaseSettings = databaseSettings;
             _spyRepo = spyRepo;
         }
         public async Task DeleteSpyAsync(string id) 
