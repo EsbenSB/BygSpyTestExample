@@ -1,14 +1,14 @@
 ﻿using BygSpyWebAPI.Models;
-using BygSpyWebAPI.Repositories;
 
 namespace BygSpyWebAPI.Repositories.Interfaces
 {
     public interface ISpyRepository
     {
-        Task CreateSpyAsync(Spy spyingObject);
-        Task DeleteSpyAsync(string id);
         Task<List<Spy>> GetAllSpyAsync();
-        Task<Spy> GetSpyByIdAsync(string id);
+        Task<Spy?> GetSpyByIdAsync(string id);
+        Task<Spy?> GetSpyByEmailAsync(string email);
+        Task CreateSpyAsync(Spy newSpyingObject);
         Task UpdateSpyAsync(string id, Spy updatedSpyingObject);
+        Task DeleteSpyAsync(string id);
     }
 }

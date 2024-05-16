@@ -27,14 +27,14 @@ namespace BygSpyWebAPI.Controllers
         {
             //todo delete me when guid is fixed
             id = "htrehtre";
-            var result = _spyService.GetSpyByIdAsync(id);
+            var result = _spyService.GetSpyAsync(id);
             return result;
         } 
 
         [HttpPost]
         public void PostSpy([FromBody] Spy Spy)
         {
-            _spyService.PostSpy(Spy);
+            _spyService.CreateSpyAsync(Spy);
         }
 
         [HttpPut("{id}")]
