@@ -1,7 +1,11 @@
 ﻿
 @page "/subscriptionPage"
 @inject IJSRuntime JSRuntime
-
+@inject NavigationManager NavManager
+@inject IHttpClientFactory ClientFactory
+@using System.Text.Json
+@using System.Text
+@using BygSpy.Models
 <div class="container">
     <div class="row justify-content-center">
         <!-- Column for adding new object and configuration -->
@@ -10,16 +14,16 @@
                 <div class="card-body">
                     <!-- Add New Object form -->
                     <h2 class="card-title text-center mb-4">Add New Object</h2>
-                    <form @onsubmit.prevent="AddObject">
+                    <form>
                         <div class="form-group">
-                            <label for="objectName">Object Name:</label>
-                            <input type="text" id="objectName" class="form-control" @bind="newObjectName" />
+                            <label>Object Name:</label>
+                            <input type="text"  class="form-control" @bind="newObjectName" />
                         </div>
                         <div class="form-group">
-                            <label for="objectAddress">Address:</label>
-                            <input type="text" id="objectAddress" class="form-control" @bind="newObjectAddress" />
+                            <label>Address:</label>
+                            <input type="text" class="form-control" @bind="newObjectAddress" />
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">Add Object</button>
+                        <button @onclick="AddObject" type="submit" class="btn btn-primary btn-block">Add Object</button>
                     </form>
                     <hr />
 
@@ -47,7 +51,7 @@
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <NavLink class="nav-link justify-content-end" href="SpyInformationCompontent">@obj.Name - @obj.Address</NavLink>
-                                <button class="btn btn-danger" @onclick="() => RemoveObject(obj)">Remove</button>
+                                <button class="btn btn-danger" >Remove</button>
                             </li>
                         }
                         <div class="row">
@@ -73,6 +77,21 @@
 
 @code {
     // todo fix backknappen tror den skal ha noget mere plads
+
+    private string spyObjectName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        var parameterName = "spyObject";
+
+        if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query).TryGetValue(parameterName, out var value))
+        {
+            spyObjectName = value;
+            // await GetSpies();
+        }
+    }
+
     public class ObjectModel
     {
         public string Name { get; set; }
@@ -100,24 +119,50 @@
     // List of unique addresses
     private List<string> objectAddresses => subscribedObjects.Select(obj => obj.Address).Distinct().ToList();
 
-    // Add a new object
-    private void AddObject()
+    // // Add a new object
+    private async Task AddObject()
     {
-        subscribedObjects.Add(new ObjectModel { Name = newObjectName, Address = newObjectAddress });
-        newObjectName = "";
-        newObjectAddress = "";
+
+        try
+        {
+            var spyObject = new SpyModel
+                {
+                    Id = "ThisIsBecauseIdAtBackEndNeed42CharactersToWorkSoIWriteThisToMakeItWorkPlzWorkGodDammit",
+                    SpyName = spyObjectName,
+                    adress = newObjectAddress,
+                    newobjectName = newObjectName
+                };
+
+            var client = ClientFactory.CreateClient();
+            var json = JsonSerializer.Serialize(spyObject); // Serialize the User object to JSON
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync("https://localhost:7299/api/spyingobject", content);
+            if (response.IsSuccessStatusCode)
+            {
+
+                StateHasChanged();
+                // await GetSpies();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+      
     }
 
-    // Remove an object
-    private void RemoveObject(ObjectModel obj)
-    {
-        subscribedObjects.Remove(obj);
-    }
+    // // Remove an object
+    // private void RemoveObject(ObjectModel obj)
+    // {
+    //     subscribedObjects.Remove(obj);
+    // }
 
-    // Show object information popup
-    private void ShowObjectPopup(ObjectModel obj)
-    {
-        selectedObject = obj;
-        JSRuntime.InvokeVoidAsync("$('#objectInfoModal').modal('show')");
-    }
+    // // Show object information popup
+    // private void ShowObjectPopup(ObjectModel obj)
+    // {
+    //     selectedObject = obj;
+    //     // JSRuntime.InvokeVoidAsync("$('#objectInfoModal').modal('show')");
+    // }
 }
