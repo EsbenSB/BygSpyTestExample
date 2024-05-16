@@ -7,9 +7,12 @@ namespace BygSpyWebAPI.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [BsonElement("Name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
+
+        [BsonElement("Creator_Email")]
+        public string Creator_Email { get; set; } = null!;
     }
 }

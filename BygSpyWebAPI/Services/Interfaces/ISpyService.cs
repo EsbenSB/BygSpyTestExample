@@ -4,10 +4,10 @@ namespace BygSpyWebAPI.Services.Interfaces
 {
     public interface ISpyService
     {
-        Task PostSpy(Spy spy);
-        Task<Spy> GetSpyByIdAsync(string id);
         Task<List<Spy>> GetAllSpies();
-        Task DeleteSpyAsync(string id);
+        Task<Spy?> GetSpyAsync(string id);
+        Task CreateSpyAsync(Spy newSpy);
         Task UpdateSpyAsync(string id, Spy updatedSpy);
+        Task DeleteSpyAsync(string id);
     }
 }
