@@ -72,7 +72,7 @@ namespace BygSpyServerTest
             var spyService = new SpyService(mockRepo.Object);
 
             // Act
-            var result = await spyService.GetSpyByIdAsync(spyId);
+            var result = await spyService.GetSpyAsync(spyId);
 
             // Assert
             result.Should().BeEquivalentTo(expectedSpy);
@@ -89,7 +89,7 @@ namespace BygSpyServerTest
             var spyService = new SpyService(mockRepo.Object);
 
             // Act
-            await spyService.PostSpy(newSpy);
+            await spyService.CreateSpyAsync(newSpy);
 
             // Assert
             mockRepo.Verify(repo => repo.CreateSpyAsync(It.Is<Spy>(s => s.Name == "New Spy" && !string.IsNullOrEmpty(s.Id))), Times.Once);
