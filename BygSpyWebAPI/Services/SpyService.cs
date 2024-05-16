@@ -44,7 +44,7 @@ namespace BygSpyWebAPI.Services
           var result = await _spyRepo.GetAllSpyAsync();
             return result;
         }
-        public async Task<Spy> GetSpyAsync(string id)
+        public async Task<Spy?> GetSpyAsync(string id)
         {
             var result = await _spyRepo.GetSpyByIdAsync(id);
             return result;
