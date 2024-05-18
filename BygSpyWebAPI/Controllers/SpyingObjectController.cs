@@ -22,17 +22,19 @@ namespace BygSpyWebAPI.Controllers
             return users;
         }
 
-        [HttpGet("{bfe}")]
-        public Task<SpyingObject> Get(string bfe)
+        [HttpGet("{id}")]
+        public Task<SpyingObject> Get(string id)
         {
-           var result = _spyingObjectService.GetSpyingObjectByIdAsync(bfe);
+           var result = _spyingObjectService.GetSpyingObjectByIdAsync(id);
             return result;
         }
 
         [HttpPost]
-        public void Post([FromBody] string adress)
+        public void Post([FromBody] SpyingObjectTransferModel spyObjectTransfer)
         {
             SpyingObject spyObject = new SpyingObject();
+            spyObject.spyId = spyObjectTransfer.spyId;
+            spyObject.newobjectName = spyObjectTransfer.newobjectName;
             //først send en adresse
             //derefter få adresse id
             //få jordstykke jordstykke
@@ -41,7 +43,9 @@ namespace BygSpyWebAPI.Controllers
             //1
             SpyingObjectTempEntity spyingObjectTempEntity = new SpyingObjectTempEntity();
 
-            spyingObjectTempEntity = _spyingObjectService.GetAddressId(adress).Result;
+           
+
+            spyingObjectTempEntity = _spyingObjectService.GetAddressId(spyObjectTransfer.adress).Result;
             //2
             var jordstykke = _spyingObjectService.GetJordstykkeFromAddressId(spyingObjectTempEntity.addressId);
             //3
@@ -64,11 +68,11 @@ namespace BygSpyWebAPI.Controllers
            await _spyingObjectService.UpdateSpyingObjectAsync(id, updatedSpyingObject);
         }
 
-        [HttpDelete("{bfe}")]
-        public void DeleteSpyingObject(string bfe)
+        [HttpDelete("{id}")]
+        public void DeleteSpyingObject(string id)
         {
             //todo jeg burde enlig ikke bruge bfe men id da der godt kan være flere brugere med samme bfe men aldrig id doh 
-            _spyingObjectService.DeleteSpyingObject(bfe);
+            _spyingObjectService.DeleteSpyingObject(id);
         }
     }
 }

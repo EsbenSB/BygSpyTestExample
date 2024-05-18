@@ -1,7 +1,11 @@
 ﻿
 @page "/subscriptionPage"
 @inject IJSRuntime JSRuntime
-
+@inject NavigationManager NavManager
+@inject IHttpClientFactory ClientFactory
+@using System.Text.Json
+@using System.Text
+@using BygSpy.Models
 <div class="container">
     <div class="row justify-content-center">
         <!-- Column for adding new object and configuration -->
@@ -10,22 +14,22 @@
                 <div class="card-body">
                     <!-- Add New Object form -->
                     <h2 class="card-title text-center mb-4">Add New Object</h2>
-                    <form @onsubmit.prevent="AddObject">
+                    <form>
                         <div class="form-group">
-                            <label for="objectName">Object Name:</label>
-                            <input type="text" id="objectName" class="form-control" @bind="newObjectName" />
+                            <label>Object Name:</label>
+                            <input type="text"  class="form-control" @bind="newObjectName" />
                         </div>
                         <div class="form-group">
-                            <label for="objectAddress">Address:</label>
-                            <input type="text" id="objectAddress" class="form-control" @bind="newObjectAddress" />
+                            <label>Address:</label>
+                            <input type="text" class="form-control" @bind="newObjectAddress" />
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">Add Object</button>
+                        <button @onclick="() => AddObject(spyId)" type="submit" class="btn btn-primary btn-block">Add Object</button>
                     </form>
                     <hr />
 
                     <!-- Configuration -->
                     <h2 class="card-title text-center mb-4">Configuration</h2>
-                    @foreach (var obj in subscribedObjects)
+                    @foreach (var obj in ConfigObjects)
                     {
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" @bind="obj.IsSelected" />
@@ -43,11 +47,12 @@
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Subscribed Objects</h2>
                     <ul class="list-group">
-                        @foreach (var obj in subscribedObjects)
+                        @foreach (var obj in spyObjects)
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <NavLink class="nav-link justify-content-end" href="SpyInformationCompontent">@obj.Name - @obj.Address</NavLink>
-                                <button class="btn btn-danger" @onclick="() => RemoveObject(obj)">Remove</button>
+                                @* Todo tilføj street tal fks nu giver den holtumvej den burde give holtumvej 2 *@
+                                <NavLink class="nav-link justify-content-end" @onclick="() => NavigateToSubscribedObject(obj.Id)" >@obj.newobjectName - @obj.Street @obj.City</NavLink>
+                                <button class="btn btn-danger" @onclick="() => DeleteSpyObject(obj.Id)">Remove</button>
                             </li>
                         }
                         <div class="row">
@@ -73,51 +78,133 @@
 
 @code {
     // todo fix backknappen tror den skal ha noget mere plads
+
+    private string spyId;
+       public List<SpyingObject> spyObjects = new List<SpyingObject>();
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        var parameterName = "spyId";
+
+        if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query).TryGetValue(parameterName, out var value))
+        {
+            spyId = value;
+            await GetSpyObject();
+        }
+    }
+
+
     public class ObjectModel
     {
         public string Name { get; set; }
         public string Address { get; set; }
-        public bool IsSelected { get; set; } // Checkbox state
+        public bool IsSelected { get; set; } 
     }
-    // List of objects
-    private List<ObjectModel> subscribedObjects = new List<ObjectModel>
+    private List<ObjectModel> ConfigObjects = new List<ObjectModel>
     {
-        new ObjectModel { Name = "Object 1", Address = "Address 1" },
-        new ObjectModel { Name = "Object 2", Address = "Address 2" },
-        new ObjectModel { Name = "Object 3", Address = "Address 3" }
+        new ObjectModel { Name = "Config 1"},
+        new ObjectModel { Name = "Config 2"},
+        new ObjectModel { Name = "Config 3" }
     };
 
-    // New object details
     private string newObjectName;
     private string newObjectAddress;
 
-    // Selected address to track
     private string selectedAddress;
 
-    // Selected object for information popup
     private ObjectModel selectedObject;
 
-    // List of unique addresses
-    private List<string> objectAddresses => subscribedObjects.Select(obj => obj.Address).Distinct().ToList();
+    private List<string> objectAddresses => ConfigObjects.Select(obj => obj.Address).Distinct().ToList();
 
-    // Add a new object
-    private void AddObject()
+    private async Task AddObject(string spyid)
     {
-        subscribedObjects.Add(new ObjectModel { Name = newObjectName, Address = newObjectAddress });
-        newObjectName = "";
-        newObjectAddress = "";
+        try
+        {
+            
+            var spyObject = new SpyModel
+                {
+                    Id = "ThisIsBecauseIdAtBackEndNeed42CharactersToWorkSoIWriteThisToMakeItWorkPlzWorkGodDammit",
+                    spyId = spyid,
+                    adress = newObjectAddress,
+                    newobjectName = newObjectName
+                };
+
+            var client = ClientFactory.CreateClient();
+            var json = JsonSerializer.Serialize(spyObject);
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync($"https://localhost:7299/api/spyingobject?spyId={spyid}", content);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                //todo find ud af hvorfor spyid forsvinder efter den her kode
+                StateHasChanged();
+                await GetSpyObject();
+            }
+            
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
     }
 
-    // Remove an object
-    private void RemoveObject(ObjectModel obj)
+
+    protected async Task GetSpyObject()
     {
-        subscribedObjects.Remove(obj);
+        try
+        {
+            var client = ClientFactory.CreateClient();
+            var response = await client.GetAsync("https://localhost:7299/api/spyingobject");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var spiesList = JsonSerializer.Deserialize<List<SpyingObject>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                spyObjects = spiesList.Where(spyObjects => spyObjects.spyId == spyId).ToList();
+            }
+            else
+            {
+                Console.WriteLine($"Failed to retrieve spies. Status code: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
     }
 
-    // Show object information popup
-    private void ShowObjectPopup(ObjectModel obj)
+    protected async Task DeleteSpyObject(string id)
     {
-        selectedObject = obj;
-        JSRuntime.InvokeVoidAsync("$('#objectInfoModal').modal('show')");
+        try
+        {
+            var client = ClientFactory.CreateClient();
+            var response = await client.DeleteAsync($"https://localhost:7299/api/spyingobject/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                StateHasChanged();
+                await GetSpyObject();
+            }
+            else
+            {
+                Console.WriteLine($"Failed to delete spying object with ID {id}. Status code: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+
+
+    protected async Task NavigateToSubscribedObject(string id)
+    {
+        NavManager.NavigateTo($"/SpyInformationCompontent?spyObjectId={id}");
     }
 }

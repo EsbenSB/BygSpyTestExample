@@ -15,7 +15,6 @@
             <div class="card">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Create User</h2>
-                    <!-- Your form for creating a new user goes here -->
                     <form>
                         <div class="form-group">
                             <label for="name">Name:</label>
@@ -33,12 +32,7 @@
                             <label for="phoneNumber">Phone number:</label>
                             <input type="phoneNumber" id="phoneNumber" class="form-control" @bind="phoneNumberValue" />
                         </div>
-
                             <button type="submit" class="btn btn-primary btn-block" @onclick="CreateUser">Create User</button>
-                        
-                        
-             
-
                     </form>
                 </div>
             </div>
@@ -72,6 +66,7 @@
         {
             var user = new User
                 {
+                    Id = "ThisIsBecauseIdAtBackEndNeed42CharactersToWorkSoIWriteThisToMakeItWorkPlzWorkGodDammit",
                     Name = nameValue,
                     Email = emailValue,
                     Password = passwordValue,
@@ -92,33 +87,5 @@
         }
     }   
 
-    protected async Task<List<User>> GetUsers()
-    {
-        try
-        {
-            var client = ClientFactory.CreateClient();
-            var response = await client.GetAsync("https://localhost:7299/api/users");
-
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var users = JsonSerializer.Deserialize<List<User>>(json, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true 
-                    });
-
-                return users;
-            }
-            else
-            {
-                Console.WriteLine($"Failed to retrieve users. Status code: {response.StatusCode}");
-                return new List<User>(); 
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred: {ex.Message}");
-            return new List<User>(); 
-        }
-    }
+    
 }
