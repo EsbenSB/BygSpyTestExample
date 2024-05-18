@@ -14,5 +14,8 @@ namespace BygSpyWebAPI.Models
 
         [BsonElement("Creator_Email")]
         public string Creator_Email { get; set; } = null!;
+
+        [BsonElement("Notification")]
+        public bool Notification { get; set; }
     }
 }

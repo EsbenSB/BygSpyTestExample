@@ -190,7 +190,7 @@ namespace BygSpyServerTest
         };
 
             var mockRepo = new Mock<ISpyingObjectRepository>();
-            mockRepo.Setup(repo => repo.GetAllSpyingObjectAsync()).ReturnsAsync(expectedSpyingObjects);
+            mockRepo.Setup(repo => repo.GetAllSpyingObjectsAsync()).ReturnsAsync(expectedSpyingObjects);
 
             var service = new SpyingObjectService(null, mockRepo.Object);
 

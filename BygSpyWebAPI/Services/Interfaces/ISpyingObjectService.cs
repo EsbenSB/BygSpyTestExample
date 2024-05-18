@@ -6,6 +6,7 @@ namespace BygSpyWebAPI.Services.Interfaces
     {
         Task<List<SpyingObject>> GetAllSpyingObjectAsync();
         Task<SpyingObject> GetSpyingObjectByIdAsync(string id);
+        Task<List<SpyingObject>> GetAllSpyingObjectsBySpyId(string spyId);
         Task<SpyingObjectTempEntity> GetAddressIdAsync(string address);
         Task<string> GetJordstykkeFromAddressIdAsync(string addressId);
         Task<int> GetBfeFromJordstykkeAsync(string addressId);

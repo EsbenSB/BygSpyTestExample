@@ -14,7 +14,7 @@ namespace BygSpyWebAPI.Services
             _spyRepository = spyRepository;
         }
 
-        public async Task<List<Spy>> GetAllSpies()
+        public async Task<List<Spy>> GetAllSpiesAsync()
         {
             var result = await _spyRepository.GetAllSpyAsync();
             return result;
@@ -22,6 +22,12 @@ namespace BygSpyWebAPI.Services
         public async Task<Spy?> GetSpyAsync(string id)
         {
             var result = await _spyRepository.GetSpyByIdAsync(id);
+            return result;
+        }
+
+        public async Task<List<Spy>> GetAllSpyiesByCreatorEmailAsync(string creatorEmail)
+        {
+            var result = await _spyRepository.GetAllSpyiesByCreatorEmailAsync(creatorEmail);
             return result;
         }
 
