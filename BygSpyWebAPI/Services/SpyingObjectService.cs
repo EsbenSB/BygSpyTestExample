@@ -19,8 +19,8 @@ namespace BygSpyWebAPI.Services
         {
             try
             {
-                var spies = await _spyingObjectRepository.GetAllSpyingObjectAsync();
-                return spies;
+                var spyingObjects = await _spyingObjectRepository.GetAllSpyingObjectsAsync();
+                return spyingObjects;
             }
             catch (Exception ex)
             {
@@ -33,6 +33,20 @@ namespace BygSpyWebAPI.Services
         {
             var result = await _spyingObjectRepository.GetSpyingObjectByIdAsync(id);
             return result;
+        }
+
+        public async Task<List<SpyingObject>> GetAllSpyingObjectsBySpyId(string spyId)
+        {
+            try
+            {
+                var spyingObjects = await _spyingObjectRepository.GetAllSpyingObjectsBySpyId(spyId);
+                return spyingObjects;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+            return null;
         }
 
         public async Task<SpyingObjectTempEntity> GetAddressIdAsync(string address)

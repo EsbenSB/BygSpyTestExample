@@ -20,6 +20,10 @@ namespace BygSpyWebAPI.Repositories
         public async Task<Spy?> GetSpyByIdAsync(string id) =>
             await _spyCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
+        public async Task<List<Spy>> GetAllSpyiesByCreatorEmailAsync(string creatorEmail) =>
+            await _spyCollection.Find(x => x.Creator_Email == creatorEmail).ToListAsync();
+
+
         public async Task CreateSpyAsync(Spy newSpy) =>
             await _spyCollection.InsertOneAsync(newSpy);
 

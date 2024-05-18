@@ -19,7 +19,7 @@ namespace BygSpyWebAPI.Controllers
         [HttpGet]
         public async Task<List<Spy>> Get()
         {
-            return await _spyService.GetAllSpies();
+            return await _spyService.GetAllSpiesAsync();
         }
 
         [HttpGet("{id}")]

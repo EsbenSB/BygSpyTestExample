@@ -14,7 +14,7 @@ namespace BygSpyWebAPI.Repositories
             _spyingObjectCollection = dbContext.SpyObjects;
         }
 
-        public async Task<List<SpyingObject>> GetAllSpyingObjectAsync()
+        public async Task<List<SpyingObject>> GetAllSpyingObjectsAsync()
         {
             try
             {
@@ -37,6 +37,20 @@ namespace BygSpyWebAPI.Repositories
             return result;
         }
 
+        public async Task<List<SpyingObject>> GetAllSpyingObjectsBySpyId(string spyId)
+        {
+            try
+            {
+                var filter = Builders<SpyingObject>.Filter.Eq("spyId", spyId);
+                var result = await _spyingObjectCollection.Find(filter).ToListAsync();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+            return null;
+        }
         public async Task CreateSpyingObjectAsync(SpyingObject spyingObject)
         {
             await _spyingObjectCollection.InsertOneAsync(spyingObject);

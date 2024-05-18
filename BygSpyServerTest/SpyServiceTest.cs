@@ -54,7 +54,7 @@ namespace BygSpyServerTest
             var spyService = new SpyService(mockRepo.Object);
 
             // Act
-            var result = await spyService.GetAllSpies();
+            var result = await spyService.GetAllSpiesAsync();
 
             // Assert
             result.Should().BeEquivalentTo(expectedSpies);
