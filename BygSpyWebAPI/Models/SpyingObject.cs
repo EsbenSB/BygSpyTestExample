@@ -13,16 +13,17 @@ namespace BygSpyWebAPI.Models
         public int BFE { get; set; }
 
         [BsonElement("Street")]
-        public string Street { get; set; }
+        public string Street { get; set; } = null!;
+
         [BsonElement("Status")]
         public int Status { get; set; }
         [BsonElement("City")]
-        public string City { get; set; }
+        public string City { get; set; } = null!;
 
         [BsonElement("spyId")]
-        public string spyId { get; set; }
+        public string SpyId { get; set; } = null!;
 
         [BsonElement("newobjectName")]
-        public string newobjectName { get; set; }
+        public string SpyingObjectName { get; set; } = null!;
     }
 }

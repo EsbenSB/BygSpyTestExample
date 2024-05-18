@@ -1,7 +1,6 @@
 ﻿using BygSpyWebAPI.Models;
 using BygSpyWebAPI.MongoDb;
 using BygSpyWebAPI.Repositories.Interfaces;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace BygSpyWebAPI.Repositories
@@ -12,13 +11,7 @@ namespace BygSpyWebAPI.Repositories
 
         public SpyingObjectRepository(BygSpyDBContext dbContext)
         {
-            //todo ændre nedenstående senere
-            _spyingObjectCollection = dbContext.SpyObject;
-        }
-
-        public async Task CreateSpyingObjectAsync(SpyingObject spyingObject)
-        {
-            await _spyingObjectCollection.InsertOneAsync(spyingObject);
+            _spyingObjectCollection = dbContext.SpyObjects;
         }
 
         public async Task<List<SpyingObject>> GetAllSpyingObjectAsync()
@@ -36,22 +29,19 @@ namespace BygSpyWebAPI.Repositories
             return null;
 
         }
+
         public async Task<SpyingObject> GetSpyingObjectByIdAsync(string id)
         {
             var filter = Builders<SpyingObject>.Filter.Eq("_id", id);
             var result = await _spyingObjectCollection.Find(filter).FirstOrDefaultAsync();
             return result;
         }
-        public async Task DeleteSpyingObjectAsync(string id)
-        {
-            var filter = Builders<SpyingObject>.Filter.Eq("_id", id);
-            var result = await _spyingObjectCollection.DeleteOneAsync(filter);
 
-            if (result.DeletedCount == 0)
-            {
-                throw new InvalidOperationException($"SpyingObject with ID {id} not found.");
-            }
+        public async Task CreateSpyingObjectAsync(SpyingObject spyingObject)
+        {
+            await _spyingObjectCollection.InsertOneAsync(spyingObject);
         }
+
         public async Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject)
         {
             Guid guidId = Guid.Parse(id);
@@ -65,5 +55,17 @@ namespace BygSpyWebAPI.Repositories
                 throw new InvalidOperationException($"SpyingObject with id {id} not found.");
             }
         }
+
+        public async Task DeleteSpyingObjectAsync(string id)
+        {
+            var filter = Builders<SpyingObject>.Filter.Eq("_id", id);
+            var result = await _spyingObjectCollection.DeleteOneAsync(filter);
+
+            if (result.DeletedCount == 0)
+            {
+                throw new InvalidOperationException($"SpyingObject with ID {id} not found.");
+            }
+        }
+
     }
 }

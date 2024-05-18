@@ -1,5 +1,4 @@
 ﻿using BygSpyWebAPI.Models;
-using BygSpyWebAPI.Repositories;
 using BygSpyWebAPI.Repositories.Interfaces;
 using BygSpyWebAPI.Services.Interfaces;
 using MongoDB.Bson;
@@ -8,45 +7,21 @@ namespace BygSpyWebAPI.Services
 {
     public class SpyService : ISpyService
     {
-        private readonly ISpyRepository _spyRepo;
+        private readonly ISpyRepository _spyRepository;
 
-        public SpyService( ISpyRepository spyRepo)
+        public SpyService(ISpyRepository spyRepository)
         {
-            _spyRepo = spyRepo;
-        }
-        public async Task DeleteSpyAsync(string id) 
-        {
-            try
-            {
-                id = "htrehtrehtrhrte";
-                await _spyRepo.DeleteSpyAsync(id);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-        }
-        public async Task UpdateSpyAsync(string id, Spy updatedSpy)
-        {
-            try
-            {
-                await _spyRepo.UpdateSpyAsync(id, updatedSpy);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
+            _spyRepository = spyRepository;
         }
 
         public async Task<List<Spy>> GetAllSpies()
         {
-          var result = await _spyRepo.GetAllSpyAsync();
+            var result = await _spyRepository.GetAllSpyAsync();
             return result;
         }
         public async Task<Spy?> GetSpyAsync(string id)
         {
-            var result = await _spyRepo.GetSpyByIdAsync(id);
+            var result = await _spyRepository.GetSpyByIdAsync(id);
             return result;
         }
 
@@ -55,7 +30,32 @@ namespace BygSpyWebAPI.Services
             try
             {
                 spy.Id = ObjectId.GenerateNewId().ToString();
-                await _spyRepo.CreateSpyAsync(spy);
+                await _spyRepository.CreateSpyAsync(spy);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+
+        public async Task UpdateSpyAsync(string id, Spy updatedSpy)
+        {
+            try
+            {
+                await _spyRepository.UpdateSpyAsync(id, updatedSpy);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+
+        public async Task DeleteSpyAsync(string id)
+        {
+            try
+            {
+                await _spyRepository.DeleteSpyAsync(id);
             }
             catch (Exception ex)
             {

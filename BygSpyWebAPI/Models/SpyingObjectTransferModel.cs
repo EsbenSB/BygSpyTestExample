@@ -4,22 +4,16 @@ namespace BygSpyWebAPI.Models
 {
     public class SpyingObjectTransferModel
     {
-        //public string Name { get; set; }
-        //public string Address { get; set; }
-        //public int status { get; set; }
+        [BsonElement("Id")]
+        public string? Id { get; set; }
 
-        //public DateTime VirkningFra { get; set; }
-            [BsonElement("Id")]
-            public string Id { get; set; }
+        [BsonElement("NewObjectName")]
+        public string NewObjectName { get; set; } = null!;
 
-            [BsonElement("newobjectName")]
-            public string newobjectName { get; set; }
+        [BsonElement("adress")]
+        public string Adress { get; set; } = null!;
 
-            [BsonElement("adress")]
-            public string adress { get; set; }
-
-            [BsonElement("spyId")]
-            public string spyId { get; set; }
-        
+        [BsonElement("spyId")]
+        public string SpyId { get; set; } = null!;
     }
 }

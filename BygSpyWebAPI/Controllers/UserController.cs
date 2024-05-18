@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using BygSpyWebAPI.Services;
+﻿using Microsoft.AspNetCore.Mvc;
 using BygSpyWebAPI.Models;
-using BygSpyWebAPI.MongoDb;
 using BygSpyWebAPI.Services.Interfaces;
 
 namespace BygSpyWebAPI.Controllers
@@ -38,16 +35,7 @@ namespace BygSpyWebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(User newUser)
         {
-            var user = await _userService.GetUserByEmailAsync(newUser.Email);
-
-            if (user is not null)
-            {
-                throw new InvalidOperationException($"User with email '{user.Email}' already exists.");
-            }
-
             await _userService.CreateUserAsync(newUser);
-            
-
             return CreatedAtAction(nameof(Get), new { id = newUser.Id }, newUser);
         }
 
