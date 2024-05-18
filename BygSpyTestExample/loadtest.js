@@ -2,7 +2,7 @@
 import { sleep } from 'k6';
 
 export default function () {
-    const baseUrl = 'https://test-api.k6.io/public/crocodiles/';
+    const baseUrl = 'https://localhost:7299/api/spy';
 
     const resGetWeatherForecast = http.get(baseUrl);
     validateResponse(resGetWeatherForecast, 200);

@@ -10,13 +10,13 @@ export let options = {
         { duration: '10s', target: 0 }   // 10 seconds duration with 0 VU (ramp down)
     ],
     thresholds: {
-        http_req_duration: ['p(01)<5000'],
+        http_req_duration: ['p(01)<50'],
         http_req_failed: ['rate<0.01']
     }
 };
 
 export default function () {
-    const baseUrl = 'https://test-api.k6.io/public/crocodiles/';
+    const baseUrl = 'https://localhost:7299/api/spy';
 
     const res = http.get(baseUrl);
 

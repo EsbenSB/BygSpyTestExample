@@ -10,6 +10,8 @@
 @using System.Text
 @inject IHttpClientFactory ClientFactory
 @inject NavigationManager NavManager
+@inject IJSRuntime JSRuntime
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -18,20 +20,18 @@
                     <h2 class="card-title text-center mb-4">Login</h2>
                     <div class="form-group">
                         <label for="email">Email:</label>
-                        <input type="email" id="email" class="form-control" @bind="email" />
+                        <input type="email" id="email" name="email" class="form-control" @bind="email" />
                     </div>
                     <div class="form-group">
                         <label for="password">Password:</label>
-                        <input type="password" id="password" class="form-control" @bind="password" />
+                        <input type="password" id="password" name="password" class="form-control" @bind="password" />
                     </div>
                     <div class="form-group">
                         <div class="row">
                             <div class="col">
-                                <button @onclick="LoginCheck" class="btn btn-primary btn-block">Login</button>
-                               
+                                <button @onclick="LoginCheck" id="login" name="login" class="btn btn-primary btn-block">Login</button>
                             </div>
                             <div class="col justify-content-end">
-
                                 <NavLink class="nav-link justify-content-end" href="newUser"><button class="btn btn-primary btn-block justify-content-end">Create User</button></NavLink>
                             </div>
                         </div>
@@ -43,10 +43,10 @@
 </div>
 
 @code {
-
     private string email;
     private string password;
-
+    private string testemail = "esb@mail.com";
+    private string testpassword = "5678";
     protected async Task LoginCheck()
     {
         try
@@ -54,17 +54,21 @@
             var users = await GetUsers();
             if (users.Any(user => user.Email == email && user.Password == password))
             {
-
-                //todo tilføj en session service der kan håndter log
                 NavManager.NavigateTo($"/Index?Email={users.FirstOrDefault(user => user.Email == email && user.Password == password).Email.ToString()}");
             }
 
+            //for puppeter test
+            if (users.Any(user => user.Email == testemail && user.Password == testpassword))
+            {
+                NavManager.NavigateTo($"/Index?Email={users.FirstOrDefault(user => user.Email == testemail && user.Password == testpassword).Email.ToString()}");
+            }
         }
         catch (Exception ex)
         {
-           
+            Console.WriteLine($"An error occurred: {ex.Message}");
         }
     }
+
 
     protected async Task<List<User>> GetUsers()
     {
@@ -80,7 +84,6 @@
                     {
                         PropertyNameCaseInsensitive = true
                     });
-
                 return users;
             }
             else
