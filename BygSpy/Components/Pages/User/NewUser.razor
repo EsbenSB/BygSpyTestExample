@@ -50,15 +50,7 @@
 
     [Inject]
     protected HttpClient Http { get; set; }
-
     protected User user = new User();
-
-    protected override async void OnInitialized()
-    {
-        // await GetUsers();
-        // await CreateUser();
-    }
-
 
     public async Task CreateUser()
     {
@@ -74,18 +66,15 @@
                 };
 
             var client = ClientFactory.CreateClient();
-            var json = JsonSerializer.Serialize(user); // Serialize the User object to JSON
+            var json = JsonSerializer.Serialize(user);
 
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await client.PostAsync("https://localhost:7299/api/users", content);
-
         }
         catch (Exception ex)
         {
             Console.WriteLine($"An error occurred: {ex.Message}");
         }
     }   
-
-    
 }

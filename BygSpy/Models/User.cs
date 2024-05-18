@@ -6,10 +6,9 @@ namespace BygSpy.Models
 {
     public class User
     {
-
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        [JsonProperty("_id")] // Assuming the backend uses "_id" for ObjectId
+        [JsonProperty("_id")]
         public string? Id { get; set; }
 
         [BsonElement("Name")]
