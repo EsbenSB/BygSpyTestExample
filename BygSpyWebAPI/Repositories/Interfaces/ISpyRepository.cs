@@ -6,7 +6,6 @@ namespace BygSpyWebAPI.Repositories.Interfaces
     {
         Task<List<Spy>> GetAllSpyAsync();
         Task<Spy?> GetSpyByIdAsync(string id);
-        Task<Spy?> GetSpyByEmailAsync(string email);
         Task CreateSpyAsync(Spy newSpyingObject);
         Task UpdateSpyAsync(string id, Spy updatedSpyingObject);
         Task DeleteSpyAsync(string id);

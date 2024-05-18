@@ -58,7 +58,6 @@
                             </button>
                             <br />
                         <br />
-               
                     }
 
                 </div>
@@ -100,7 +99,7 @@
     public List<Spy> spies = new List<Spy>();
 
     public List<SpyModel> spyObjects = new List<SpyModel>();
-    private string Email;
+    private string? Email;
 
     protected override async Task OnInitializedAsync()
     {
@@ -123,6 +122,34 @@
     {
         modalDisplay = "none";
         SpyName = ""; // Clear spy name input
+    }
+
+    protected async Task GetSpies()
+    {
+        try
+        {
+            var client = ClientFactory.CreateClient();
+            var response = await client.GetAsync("https://localhost:7299/api/spy");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var spiesList = JsonSerializer.Deserialize<List<Spy>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                spies = spiesList.Where(spy => spy.Creator_Email == Email).ToList();
+            }
+            else
+            {
+                Console.WriteLine($"Failed to retrieve spies. Status code: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
     }
 
     public async Task AddSpy()
@@ -156,36 +183,7 @@
 
         CloseModal();
     }
-    protected async Task GetSpies()
-    {
-        try
-        {
-            var client = ClientFactory.CreateClient();
-            var response = await client.GetAsync("https://localhost:7299/api/spy");
-
-            if (response.IsSuccessStatusCode)
-            {
-                var json = await response.Content.ReadAsStringAsync();
-                var spiesList = JsonSerializer.Deserialize<List<Spy>>(json, new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
-
-                spies = spiesList.Where(spy => spy.Creator_Email == Email).ToList();
-            }
-            else
-            {
-                Console.WriteLine($"Failed to retrieve spies. Status code: {response.StatusCode}");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred: {ex.Message}");
-        }
-    }
-
-
-
+    
     protected async Task EnterSpyObject(Spy spyObject)
     {
         try

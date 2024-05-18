@@ -1,18 +1,16 @@
-﻿
-@page "/subscriptionPage"
+﻿@page "/subscriptionPage"
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
 @inject IHttpClientFactory ClientFactory
 @using System.Text.Json
 @using System.Text
 @using BygSpy.Models
+
 <div class="container">
     <div class="row justify-content-center">
-        <!-- Column for adding new object and configuration -->
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
-                    <!-- Add New Object form -->
                     <h2 class="card-title text-center mb-4">Add New Object</h2>
                     <form>
                         <div class="form-group">
@@ -27,7 +25,6 @@
                     </form>
                     <hr />
 
-                    <!-- Configuration -->
                     <h2 class="card-title text-center mb-4">Configuration</h2>
                     @foreach (var obj in ConfigObjects)
                     {
@@ -36,8 +33,6 @@
                             <label class="form-check-label" for="@($"checkbox-{obj.Name}")">@obj.Name</label>
                         </div>
                     }
-
-               
                 </div>
             </div>
         </div>
@@ -50,7 +45,6 @@
                         @foreach (var obj in spyObjects)
                         {
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                @* Todo tilføj street tal fks nu giver den holtumvej den burde give holtumvej 2 *@
                                 <NavLink class="nav-link justify-content-end" @onclick="() => NavigateToSubscribedObject(obj.Id)" >@obj.newobjectName - @obj.Street @obj.City</NavLink>
                                 <button class="btn btn-danger" @onclick="() => DeleteSpyObject(obj.Id)">Remove</button>
                             </li>
@@ -62,7 +56,6 @@
                                 <NavLink class="nav-link" href="Index">
                                     <button class="btn btn-primary">Back</button>
                                 </NavLink>
-
                             </div>
                             <div class="col-1">
                             </div>
@@ -77,10 +70,13 @@
 </div>
 
 @code {
-    // todo fix backknappen tror den skal ha noget mere plads
-
-    private string spyId;
-       public List<SpyingObject> spyObjects = new List<SpyingObject>();
+    private string? spyId;
+    public List<SpyingObject> spyObjects = new List<SpyingObject>();
+    private string newObjectName;
+    private string newObjectAddress;
+    private string selectedAddress;
+    private ObjectModel selectedObject;
+    
     protected override async Task OnInitializedAsync()
     {
         var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
@@ -93,11 +89,9 @@
         }
     }
 
-
     public class ObjectModel
     {
-        public string Name { get; set; }
-        public string Address { get; set; }
+        public string? Name { get; set; }
         public bool IsSelected { get; set; } 
     }
     private List<ObjectModel> ConfigObjects = new List<ObjectModel>
@@ -106,50 +100,6 @@
         new ObjectModel { Name = "Config 2"},
         new ObjectModel { Name = "Config 3" }
     };
-
-    private string newObjectName;
-    private string newObjectAddress;
-
-    private string selectedAddress;
-
-    private ObjectModel selectedObject;
-
-    private List<string> objectAddresses => ConfigObjects.Select(obj => obj.Address).Distinct().ToList();
-
-    private async Task AddObject(string spyid)
-    {
-        try
-        {
-            
-            var spyObject = new SpyModel
-                {
-                    Id = "ThisIsBecauseIdAtBackEndNeed42CharactersToWorkSoIWriteThisToMakeItWorkPlzWorkGodDammit",
-                    spyId = spyid,
-                    adress = newObjectAddress,
-                    newobjectName = newObjectName
-                };
-
-            var client = ClientFactory.CreateClient();
-            var json = JsonSerializer.Serialize(spyObject);
-
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await client.PostAsync($"https://localhost:7299/api/spyingobject?spyId={spyid}", content);
-            
-            if (response.IsSuccessStatusCode)
-            {
-                //todo find ud af hvorfor spyid forsvinder efter den her kode
-                StateHasChanged();
-                await GetSpyObject();
-            }
-            
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred: {ex.Message}");
-        }
-    }
-
 
     protected async Task GetSpyObject()
     {
@@ -179,6 +129,38 @@
         }
     }
 
+    private async Task AddObject(string spyid)
+    {
+        try
+        {           
+            var spyObject = new SpyModel
+                {
+                    Id = "ThisIsBecauseIdAtBackEndNeed42CharactersToWorkSoIWriteThisToMakeItWorkPlzWorkGodDammit",
+                    SpyId = spyid,
+                    Adress = newObjectAddress,
+                    NewObjectName = newObjectName
+                };
+
+            var client = ClientFactory.CreateClient();
+            var json = JsonSerializer.Serialize(spyObject);
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync($"https://localhost:7299/api/spyingobject?spyId={spyid}", content);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                StateHasChanged();
+                await GetSpyObject();
+            }
+            
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+    }
+
     protected async Task DeleteSpyObject(string id)
     {
         try
@@ -201,7 +183,6 @@
             Console.WriteLine($"An error occurred: {ex.Message}");
         }
     }
-
 
     protected async Task NavigateToSubscribedObject(string id)
     {

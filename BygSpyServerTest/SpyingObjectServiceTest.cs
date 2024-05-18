@@ -1,6 +1,7 @@
 ﻿using BygSpyWebAPI.Models;
 using BygSpyWebAPI.Repositories.Interfaces;
 using BygSpyWebAPI.Services;
+using BygSpyWebAPI.Services.Interfaces;
 using FluentAssertions;
 using Moq;
 using Moq.Protected;
@@ -11,19 +12,19 @@ namespace BygSpyServerTest
     public class SpyingObjectServiceTest
 
     {
-        [Fact]
-        public void CreateSpyObject_Should_Return_Empty_List()
-        {
+        //[Fact]
+        //public void CreateSpyObject_Should_Return_Empty_List()
+        //{
             // Arrange
-            var mockRepo = new Mock<ISpyingObjectRepository>();
-            var service = new SpyingObjectService(null, null, mockRepo.Object);
+            //var mockRepo = new Mock<ISpyingObjectRepository>();
+            //var service = new SpyingObjectService(null, mockRepo.Object);
 
-            // Act
-            var result = service.CreateSpyObject();
+            //// Act
+            //var result = service.CreateSpyObject();
 
-            // Assert
-            result.Should().BeEmpty();
-        }
+            //// Assert
+            //result.Should().BeEmpty();
+        //}
 
         [Fact]
         public async Task GetAddressId_Should_Return_SpyingObjectTempEntity_When_Successful()
@@ -45,14 +46,14 @@ namespace BygSpyServerTest
                 .ReturnsAsync(mockResponse);
 
             var httpClient = new HttpClient(handlerMock.Object);
-            var service = new SpyingObjectService(null, httpClient, null);
+            var service = new SpyingObjectService(httpClient, null);
 
             // Act
-            var result = await service.GetAddressId("some address");
+            var result = await service.GetAddressIdAsync("some address");
 
             // Assert
             result.Should().NotBeNull();
-            result.addressId.Should().Be("123");
+            result.AddressId.Should().Be("123");
             result.Street.Should().Be("Street");
             result.City.Should().Be("City");
         }
@@ -77,10 +78,10 @@ namespace BygSpyServerTest
                 .ReturnsAsync(mockResponse);
 
             var httpClient = new HttpClient(handlerMock.Object);
-            var service = new SpyingObjectService(null, httpClient, null);
+            var service = new SpyingObjectService(httpClient, null);
 
             // Act
-            var result = await service.GetJordstykkeFromAddressId("some-address-id");
+            var result = await service.GetJordstykkeFromAddressIdAsync("some-address-id");
 
             // Assert
             result.Should().Be("some-jordstykke");
@@ -106,10 +107,10 @@ namespace BygSpyServerTest
                 .ReturnsAsync(mockResponse);
 
             var httpClient = new HttpClient(handlerMock.Object);
-            var service = new SpyingObjectService(null, httpClient, null);
+            var service = new SpyingObjectService(httpClient, null);
 
             // Act
-            var result = await service.GetBfeFromJordstykke("some-jordstykke");
+            var result = await service.GetBfeFromJordstykkeAsync("some-jordstykke");
 
             // Assert
             result.Should().Be(123);
@@ -135,10 +136,10 @@ namespace BygSpyServerTest
                 .ReturnsAsync(mockResponse);
 
             var httpClient = new HttpClient(handlerMock.Object);
-            var service = new SpyingObjectService(null, httpClient, null);
+            var service = new SpyingObjectService(httpClient, null);
 
             // Act
-            var result = await service.GetGrundFromBfe(123);
+            var result = await service.GetGrundFromBfeAsync(123);
 
             // Assert
             result.Should().Be(1);
@@ -151,11 +152,11 @@ namespace BygSpyServerTest
             var mockRepo = new Mock<ISpyingObjectRepository>();
             mockRepo.Setup(repo => repo.CreateSpyingObjectAsync(It.IsAny<SpyingObject>())).Returns(Task.CompletedTask);
 
-            var service = new SpyingObjectService(null, null, mockRepo.Object);
+            var service = new SpyingObjectService(null, mockRepo.Object);
             var newSpyObject = new SpyingObject { Id = Guid.NewGuid(), Street = "Vejlevej 22" };
 
             // Act
-            await service.PostSpyingObject(newSpyObject);
+            await service.CreateSpyObjectAsync(newSpyObject);
 
             // Assert
             mockRepo.Verify(repo => repo.CreateSpyingObjectAsync(It.Is<SpyingObject>(s => s.Id == Guid.NewGuid())), Times.Once);
@@ -168,11 +169,11 @@ namespace BygSpyServerTest
             var mockRepo = new Mock<ISpyingObjectRepository>();
             mockRepo.Setup(repo => repo.DeleteSpyingObjectAsync(It.IsAny<string>())).Returns(Task.CompletedTask);
 
-            var service = new SpyingObjectService(null, null, mockRepo.Object);
+            var service = new SpyingObjectService(null, mockRepo.Object);
             var bfe = "some-bfe";
 
             // Act
-            await service.DeleteSpyingObject(bfe);
+            await service.DeleteSpyingObjectAsync(bfe);
 
             // Assert
             mockRepo.Verify(repo => repo.DeleteSpyingObjectAsync(bfe), Times.Once);
@@ -191,7 +192,7 @@ namespace BygSpyServerTest
             var mockRepo = new Mock<ISpyingObjectRepository>();
             mockRepo.Setup(repo => repo.GetAllSpyingObjectAsync()).ReturnsAsync(expectedSpyingObjects);
 
-            var service = new SpyingObjectService(null, null, mockRepo.Object);
+            var service = new SpyingObjectService(null, mockRepo.Object);
 
             // Act
             var result = await service.GetAllSpyingObjectAsync();
@@ -210,7 +211,7 @@ namespace BygSpyServerTest
             var mockRepo = new Mock<ISpyingObjectRepository>();
             mockRepo.Setup(repo => repo.GetSpyingObjectByIdAsync(spyId.ToString())).ReturnsAsync(expectedSpyObject);
 
-            var service = new SpyingObjectService(null, null, mockRepo.Object);
+            var service = new SpyingObjectService(null, mockRepo.Object);
 
             // Act
             var result = await service.GetSpyingObjectByIdAsync(spyId.ToString());
@@ -226,7 +227,7 @@ namespace BygSpyServerTest
             var mockRepo = new Mock<ISpyingObjectRepository>();
             mockRepo.Setup(repo => repo.UpdateSpyingObjectAsync(It.IsAny<string>(), It.IsAny<SpyingObject>())).Returns(Task.CompletedTask);
 
-            var service = new SpyingObjectService(null, null, mockRepo.Object);
+            var service = new SpyingObjectService(null, mockRepo.Object);
             var spyId = Guid.NewGuid();
             var updatedSpyObject = new SpyingObject { Id = spyId, Street = "Vejlevej 22" };
 
@@ -244,10 +245,10 @@ namespace BygSpyServerTest
             var tempEntity = new SpyingObjectTempEntity { City = "City", Street = "Street" };
             var spyObject = new SpyingObject();
 
-            var service = new SpyingObjectService(null, null, null);
+            var service = new SpyingObjectService(null, null);
 
             // Act
-            var result = await service.MapToSpyingObject(tempEntity, spyObject);
+            var result = await service.MapToSpyingObjectAsync(tempEntity, spyObject);
 
             // Assert
             result.Should().NotBeNull();

@@ -4,11 +4,13 @@ namespace BygSpyWebAPI.Models
 {
     public class SpyingObjectTempEntity
     {
-        [BsonElement("addressId")]
-        public string addressId { get; set; }
+        [BsonElement("AddressId")]
+        public string AddressId { get; set; } = null!;
+
         [BsonElement("Street")]
-        public string Street { get; set; }
-        [BsonElement()]
-        public string City { get; set; }
+        public string Street { get; set; } = null!;
+
+        [BsonElement("City")]
+        public string City { get; set; } = null!;
     }
 }

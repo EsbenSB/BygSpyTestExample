@@ -1,12 +1,10 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
-using System.Text.Json.Serialization;
 
 namespace BygSpy.Models
 {
     public class Spy
     {
-
         public string? Id { get; set; }
 
         [BsonElement("Name")]
