@@ -14,6 +14,7 @@ builder.Services.AddSingleton<BygSpyDBContext>();
 builder.Services.AddSingleton<ISpyingObjectRepository, SpyingObjectRepository>();
 builder.Services.AddSingleton<ISpyingObjectService, SpyingObjectService>();
 builder.Services.AddSingleton<ISpyRepository, SpyRepository>();
+builder.Services.AddSingleton<ISpyNotificationService, SpyNotificationService>();
 builder.Services.AddSingleton<ISpyService, SpyService>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IUserService, UserService>();

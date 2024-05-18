@@ -15,10 +15,10 @@ namespace BygSpyWebAPI.Controllers
             _spyNotificationService = spyNotificationService;
         }
 
-        [HttpGet]
-        public async Task<List<Spy>> Get(List<Spy> spy)
+        [HttpPost]
+        public async Task<List<Spy>> GetSpies([FromBody] List<Spy> spies)
         {
-            var result = await _spyNotificationService.GetSpyNotification(spy);
+            var result = await _spyNotificationService.GetSpyNotification(spies);
             return result;
         }
 

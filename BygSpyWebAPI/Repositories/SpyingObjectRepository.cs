@@ -58,6 +58,7 @@ namespace BygSpyWebAPI.Repositories
 
         public async Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject)
         {
+            //todo Fix this it dosnt update correctly
             Guid guidId = Guid.Parse(id);
 
             var filter = Builders<SpyingObject>.Filter.Eq(s => s.Id, guidId);

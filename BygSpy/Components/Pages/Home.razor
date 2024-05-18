@@ -54,7 +54,12 @@
 
                         <button @onclick="async () => await EnterSpyObject(spy)" type="button" class="btn btn-primary notification-badge">
                                 @spy.Name
-                                <span class="badge">3</span>
+                               
+                                @if(spy.Notification == true)
+                                {
+                                <span class="badge">1</span>
+                                }
+
                             </button>
                             <br />
                         <br />
@@ -140,6 +145,10 @@
                     });
 
                 spies = spiesList.Where(spy => spy.Creator_Email == Email).ToList();
+
+                var result = await GetSpiesNotification(spies);
+
+                spies = result;
             }
             else
             {
@@ -151,6 +160,66 @@
             Console.WriteLine($"An error occurred: {ex.Message}");
         }
     }
+
+    protected async Task<List<Spy>> GetSpiesNotification(List<Spy> spiesToSend)
+    {
+        List<Spy> processedSpies = new List<Spy>();
+
+        try
+        {
+            var client = ClientFactory.CreateClient();
+            var spiesJson = JsonSerializer.Serialize(spiesToSend);
+
+            var content = new StringContent(spiesJson, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("https://localhost:7299/api/spyingnotification", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                processedSpies = JsonSerializer.Deserialize<List<Spy>>(json, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+            }
+            else
+            {
+                Console.WriteLine($"Failed to retrieve spies. Status code: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+
+        return processedSpies;
+    }
+
+
+
+    // protected async Task GetSpiesNotifications(List<Spy> spiesNotification)
+    // {
+    //     try
+    //     {
+    //         var serializedList = new StringContent(spiesNotification, Encoding.UTF8, "application/json");
+
+    //         var client = ClientFactory.CreateClient();
+            
+    //         var response = await client.PostAsync("https://localhost:7299/api/spyingnotification", serializedList);
+
+    //             var json = await response.Content.ReadAsStringAsync();
+    //             var spiesList = JsonSerializer.Deserialize<List<Spy>>(json, new JsonSerializerOptions
+    //                 {
+    //                     PropertyNameCaseInsensitive = true
+    //                 });
+
+    //         spiesNotification = spiesList.Where(spy => spy.Creator_Email == Email).ToList();
+           
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Console.WriteLine($"An error occurred: {ex.Message}");
+    //     }
+    // }
 
     public async Task AddSpy()
     {
@@ -184,11 +253,33 @@
         CloseModal();
     }
     
-    protected async Task EnterSpyObject(Spy spyObject)
+    public async Task PutSpy(Spy spy)
+    {
+
+        try
+        {
+
+            var client = ClientFactory.CreateClient();
+            var json = JsonSerializer.Serialize(spy); // Serialize the User object to JSON
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PutAsync("https://localhost:7299/api/spyingnotification", content);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+
+    }
+
+    protected async Task EnterSpyObject(Spy spy)
     {
         try
         {
-            NavManager.NavigateTo($"/subscriptionPage?spyId={spyObject.Id}");
+            await PutSpy(spy);
+            NavManager.NavigateTo($"/subscriptionPage?spyId={spy.Id}");
         }
         catch (Exception ex)
         {

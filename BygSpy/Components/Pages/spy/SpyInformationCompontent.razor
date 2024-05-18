@@ -34,6 +34,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        
         var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
         var parameterName = "spyObjectId";
 
@@ -70,5 +71,7 @@
             Console.WriteLine($"An error occurred: {ex.Message}");
         }
     }
+
+
 
 }
