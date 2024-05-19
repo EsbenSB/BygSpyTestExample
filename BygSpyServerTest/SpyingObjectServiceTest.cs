@@ -10,22 +10,7 @@ using System.Net;
 namespace BygSpyServerTest
 {
     public class SpyingObjectServiceTest
-
     {
-        //[Fact]
-        //public void CreateSpyObject_Should_Return_Empty_List()
-        //{
-            // Arrange
-            //var mockRepo = new Mock<ISpyingObjectRepository>();
-            //var service = new SpyingObjectService(null, mockRepo.Object);
-
-            //// Act
-            //var result = service.CreateSpyObject();
-
-            //// Assert
-            //result.Should().BeEmpty();
-        //}
-
         [Fact]
         public async Task GetAddressId_Should_Return_SpyingObjectTempEntity_When_Successful()
         {
@@ -255,48 +240,5 @@ namespace BygSpyServerTest
             result.City.Should().Be("City");
             result.Street.Should().Be("Street");
         }
-
-        //[Fact]
-        //public void ParseIdFromResponse_Should_Return_Id_When_Present()
-        //{
-        //    // Arrange
-        //    var json = "[{\"id\": \"123\"}]";
-        //    var service = new SpyingObjectService(null, null, null);
-
-        //    // Act
-        //    var result = service.ParseIdFromResponse(json);
-
-        //    // Assert
-        //    result.Should().Be("123");
-        //}
-
-        //[Fact]
-        //public void ParseIdFromResponse_Should_Return_Null_When_Not_Present()
-        //{
-        //    // Arrange
-        //    var json = "[]";
-        //    var service = new SpyingObjectService(null, null, null);
-
-        //    // Act
-        //    var result = service.ParseIdFromResponse(json);
-
-        //    // Assert
-        //    result.Should().BeNull();
-        //}
-
-        //[Fact]
-        //public void EncodeingString_Should_Encode_String()
-        //{
-        //    // Arrange
-        //    var input = "some string";
-        //    var expected = "some%string";
-        //    var service = new SpyingObjectService(null, null, null);
-
-        //    // Act
-        //    var result = service.EncodeingString(input);
-
-        //    // Assert
-        //    result.Should().Be(expected);
-        //}
     }
 }

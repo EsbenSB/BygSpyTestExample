@@ -15,7 +15,6 @@
 
 
 <style>
-    /* Custom CSS for the notification bubble */
     .notification-badge {
         position: relative;
     }
@@ -72,7 +71,6 @@
     <br />
 </div>
 
-<!-- Modal for adding spy -->
 <div class="modal" tabindex="-1" role="dialog" style="display: @modalDisplay">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -126,7 +124,7 @@
     private void CloseModal()
     {
         modalDisplay = "none";
-        SpyName = ""; // Clear spy name input
+        SpyName = ""; 
     }
 
     protected async Task GetSpies()
@@ -195,32 +193,6 @@
     }
 
 
-
-    // protected async Task GetSpiesNotifications(List<Spy> spiesNotification)
-    // {
-    //     try
-    //     {
-    //         var serializedList = new StringContent(spiesNotification, Encoding.UTF8, "application/json");
-
-    //         var client = ClientFactory.CreateClient();
-            
-    //         var response = await client.PostAsync("https://localhost:7299/api/spyingnotification", serializedList);
-
-    //             var json = await response.Content.ReadAsStringAsync();
-    //             var spiesList = JsonSerializer.Deserialize<List<Spy>>(json, new JsonSerializerOptions
-    //                 {
-    //                     PropertyNameCaseInsensitive = true
-    //                 });
-
-    //         spiesNotification = spiesList.Where(spy => spy.Creator_Email == Email).ToList();
-           
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         Console.WriteLine($"An error occurred: {ex.Message}");
-    //     }
-    // }
-
     public async Task AddSpy()
     {
         try
@@ -233,7 +205,7 @@
                 };
 
             var client = ClientFactory.CreateClient();
-            var json = JsonSerializer.Serialize(spy); // Serialize the User object to JSON
+            var json = JsonSerializer.Serialize(spy);
 
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -260,7 +232,7 @@
         {
 
             var client = ClientFactory.CreateClient();
-            var json = JsonSerializer.Serialize(spy); // Serialize the User object to JSON
+            var json = JsonSerializer.Serialize(spy); 
 
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
