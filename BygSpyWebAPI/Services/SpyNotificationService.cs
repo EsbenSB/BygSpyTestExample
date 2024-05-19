@@ -35,7 +35,7 @@ namespace BygSpyWebAPI.Services
                         {
                             obj.Notification = true;
                             await _spyService.UpdateSpyAsync(spyObj.SpyId, obj);
-                            await _spyingObjectService.UpdateSpyingObjectAsync(Convert.ToString(spyObj.Id) , spyObj);
+                            await _spyingObjectService.UpdateSpyingObjectAsync(spyObj.Id, spyObj);
                         }
                     }
                 }
@@ -47,6 +47,15 @@ namespace BygSpyWebAPI.Services
         public async Task<Spy> UpdateSpyNotification(Spy spy)
         {
             spy.Notification = false;
+
+            var tempList = await _spyingObjectService.GetAllSpyingObjectsBySpyId(spy.Id);
+
+            foreach (var obj in tempList)
+            {
+                obj.Status = await _spyingObjectService.GetGrundFromBfeAsync(obj.BFE);
+                await _spyingObjectService.UpdateSpyingObjectAsync(obj.Id, obj);
+            }
+
             await _spyService.UpdateSpyAsync(spy.Id, spy);
             return spy;
         }

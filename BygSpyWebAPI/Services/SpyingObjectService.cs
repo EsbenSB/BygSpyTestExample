@@ -1,6 +1,7 @@
 ﻿using BygSpyWebAPI.Models;
 using BygSpyWebAPI.Repositories.Interfaces;
 using BygSpyWebAPI.Services.Interfaces;
+using MongoDB.Bson;
 using Newtonsoft.Json.Linq;
 
 namespace BygSpyWebAPI.Services
@@ -31,7 +32,7 @@ namespace BygSpyWebAPI.Services
 
         public async Task<SpyingObject> GetSpyingObjectByIdAsync(string id)
         {
-            var result = await _spyingObjectRepository.GetSpyingObjectByIdAsync(id);
+            var result = await _spyingObjectRepository.GetSpyingObjectAsync(id);
             return result;
         }
 
@@ -220,11 +221,12 @@ namespace BygSpyWebAPI.Services
             return null;
         }
 
-        public async Task CreateSpyObjectAsync(SpyingObject spyObject)
+        public async Task CreateSpyObjectAsync(SpyingObject newSpyingObject)
         {
             try
             {
-                await _spyingObjectRepository.CreateSpyingObjectAsync(spyObject);
+                newSpyingObject.Id = ObjectId.GenerateNewId().ToString();
+                await _spyingObjectRepository.CreateSpyingObjectAsync(newSpyingObject);
             }
             catch (Exception ex)
             {

@@ -1,13 +1,15 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using Newtonsoft.Json;
 
 namespace BygSpyWebAPI.Models
 {
     public class SpyingObject
     {
         [BsonId]
-        [BsonRepresentation(BsonType.String)]
-        public Guid Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        [JsonProperty("_id")]
+        public string? Id { get; set; }
 
         [BsonElement("BFE")]
         public int BFE { get; set; }

@@ -23,9 +23,15 @@ namespace BygSpyWebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<Spy> Get(string id)
+        public async Task<ActionResult<Spy>> Get(string id)
         {
             var result = await _spyService.GetSpyAsync(id);
+
+            if (result is null)
+            {
+                return NotFound();
+            }
+
             return result;
         } 
 
