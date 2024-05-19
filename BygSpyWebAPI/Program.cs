@@ -18,6 +18,7 @@ builder.Services.AddSingleton<ISpyNotificationService, SpyNotificationService>()
 builder.Services.AddSingleton<ISpyService, SpyService>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IUserValidator, EmailValidator>();
 builder.Services.AddHttpClient();
 var app = builder.Build();
 

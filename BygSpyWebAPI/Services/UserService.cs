@@ -2,6 +2,7 @@
 using BygSpyWebAPI.Repositories.Interfaces;
 using BygSpyWebAPI.Services.Interfaces;
 using MongoDB.Bson;
+using System.ComponentModel.DataAnnotations;
 
 namespace BygSpyWebAPI.Services
 {
@@ -9,10 +10,12 @@ namespace BygSpyWebAPI.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IEnumerable<IUserValidator> _validators;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository , IEnumerable<IUserValidator> validators)
         {
             _userRepository = userRepository;
+            _validators = validators;
         }
 
         public async Task<List<User>> GetAllUsersAsync()
@@ -34,15 +37,12 @@ namespace BygSpyWebAPI.Services
 
         public async Task CreateUserAsync(User newUser)
         {
-            var user = await GetUserByEmailAsync(newUser.Email);
-
-            if (user is not null)
-            {
-                throw new InvalidOperationException($"User with email '{user.Email}' already exists.");
-            }
-
             try
             {
+                foreach (var validator in _validators)
+                {
+                    await validator.ValidateAsync(newUser);
+                }
                 newUser.Id = ObjectId.GenerateNewId().ToString();
                 await _userRepository.CreateUserAsync(newUser);
             }

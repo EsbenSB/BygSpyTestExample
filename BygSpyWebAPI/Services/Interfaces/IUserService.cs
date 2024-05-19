@@ -10,6 +10,5 @@ namespace BygSpyWebAPI.Services.Interfaces
         Task CreateUserAsync(User newUser);
         Task UpdateUserAsync(string id, User updatedUser);
         Task DeleteUserAsync(string id);
-
     }
 }
