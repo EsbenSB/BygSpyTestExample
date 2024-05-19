@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BygSpyTestExample", "BygSpyTestExample\BygSpyTestExample.csproj", "{4E2A5F19-51B3-42C5-A52D-F9AA527D7D33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BygSpyTestK6", "BygSpyTestExample\BygSpyTestK6.csproj", "{4E2A5F19-51B3-42C5-A52D-F9AA527D7D33}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BygSpy.specs", "BygSpySpecFlowProject\BygSpy.specs.csproj", "{E8EC91F7-19AE-41DD-B9A8-28730C13989D}"
 EndProject
