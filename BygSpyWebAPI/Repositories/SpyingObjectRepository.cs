@@ -14,73 +14,24 @@ namespace BygSpyWebAPI.Repositories
             _spyingObjectCollection = dbContext.SpyObjects;
         }
 
-        public async Task<List<SpyingObject>> GetAllSpyingObjectsAsync()
-        {
-            try
-            {
-                var filter = Builders<SpyingObject>.Filter.Empty;
-                var result = await _spyingObjectCollection.Find(filter).ToListAsync();
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-            return null;
+        public async Task<List<SpyingObject>> GetAllSpyingObjectsAsync() =>
+            await _spyingObjectCollection.Find(_ => true).ToListAsync();
 
-        }
+        public async Task<SpyingObject?> GetSpyingObjectAsync(string id) =>
+            await _spyingObjectCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-        public async Task<SpyingObject> GetSpyingObjectByIdAsync(string id)
-        {
-            var filter = Builders<SpyingObject>.Filter.Eq("_id", id);
-            var result = await _spyingObjectCollection.Find(filter).FirstOrDefaultAsync();
-            return result;
-        }
-
-        public async Task<List<SpyingObject>> GetAllSpyingObjectsBySpyId(string spyId)
-        {
-            try
-            {
-                var filter = Builders<SpyingObject>.Filter.Eq("spyId", spyId);
-                var result = await _spyingObjectCollection.Find(filter).ToListAsync();
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-            return null;
-        }
+        public async Task<List<SpyingObject>> GetAllSpyingObjectsBySpyId(string spyId) =>
+            await _spyingObjectCollection.Find(x => x.SpyId == spyId).ToListAsync();
+        
         public async Task CreateSpyingObjectAsync(SpyingObject spyingObject)
         {
             await _spyingObjectCollection.InsertOneAsync(spyingObject);
         }
 
-        public async Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject)
-        {
-            //todo Fix this it dosnt update correctly
-            Guid guidId = Guid.Parse(id);
+        public async Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject) =>
+            await _spyingObjectCollection.ReplaceOneAsync(x => x.Id == id, updatedSpyingObject);
 
-            var filter = Builders<SpyingObject>.Filter.Eq(s => s.Id, guidId);
-
-            var result = await _spyingObjectCollection.ReplaceOneAsync(filter, updatedSpyingObject);
-
-            if (result.MatchedCount == 0)
-            {
-                throw new InvalidOperationException($"SpyingObject with id {id} not found.");
-            }
-        }
-
-        public async Task DeleteSpyingObjectAsync(string id)
-        {
-            var filter = Builders<SpyingObject>.Filter.Eq("_id", id);
-            var result = await _spyingObjectCollection.DeleteOneAsync(filter);
-
-            if (result.DeletedCount == 0)
-            {
-                throw new InvalidOperationException($"SpyingObject with ID {id} not found.");
-            }
-        }
-
+        public async Task DeleteSpyingObjectAsync(string id) =>
+            await _spyingObjectCollection.DeleteOneAsync(x => x.Id == id);
     }
 }
