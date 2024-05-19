@@ -1,84 +1,36 @@
 ﻿using BygSpyWebAPI.Models;
 using BygSpyWebAPI.MongoDb;
 using BygSpyWebAPI.Repositories.Interfaces;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace BygSpyWebAPI.Repositories
 {
     public class SpyRepository : ISpyRepository
     {
-        private readonly IMongoCollection<Spy> _spyingObjectCollection;
+        private readonly IMongoCollection<Spy> _spyCollection;
 
-        public SpyRepository(MongoDb.BygSpyDBContext dbContext)
+        public SpyRepository(BygSpyDBContext dbContext)
         {
-            _spyingObjectCollection = dbContext.spy;
+            _spyCollection = dbContext.Spies;
         }
 
-        public async Task CreateSpyAsync(Spy spy)
-        {
-            
-            await _spyingObjectCollection.InsertOneAsync(spy);
-        }
-        public async Task<List<Spy>> GetAllSpyAsync()
-        {
-            try
-            {
-                var filter = Builders<Spy>.Filter.Empty;
-                var result = await _spyingObjectCollection.Find(filter).ToListAsync();
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-            return null;
+        public async Task<List<Spy>> GetAllSpyAsync() =>
+            await _spyCollection.Find(_ => true).ToListAsync();
 
-        }
-        public async Task<List<Spy>> GetAllSpyingObjectAsync()
-        {
-            try
-            {
-                var filter = Builders<Spy>.Filter.Empty;
-                var result = await _spyingObjectCollection.Find(filter).ToListAsync();
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-            return null;
+        public async Task<Spy?> GetSpyByIdAsync(string id) =>
+            await _spyCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-        }
-        public async Task<Spy> GetSpyByIdAsync(string id)
-        {
-            //todo spørg esben hvad jeg gør forkert når jeg prøver og hente basserede på id 
-            var filter = Builders<Spy>.Filter.Eq("Name", id);
-            var result = await _spyingObjectCollection.Find(filter).FirstOrDefaultAsync();
-            return result;
-        }
-        public async Task DeleteSpyAsync(string id)
-        {
-            var filter = Builders<Spy>.Filter.Eq("Name", id);
-            var result = await _spyingObjectCollection.DeleteOneAsync(filter);
+        public async Task<List<Spy>> GetAllSpyiesByCreatorEmailAsync(string creatorEmail) =>
+            await _spyCollection.Find(x => x.Creator_Email == creatorEmail).ToListAsync();
 
-            if (result.DeletedCount == 0)
-            {
-                throw new InvalidOperationException($"SpyingObject with ID {id} not found.");
-            }
-        }
-        public async Task UpdateSpyAsync(string id, Spy updatedSpyingObject)
-        {
-            //Guid guidId = Guid.Parse(id);
 
-            var filter = Builders<Spy>.Filter.Eq(s => s.Name, id);
+        public async Task CreateSpyAsync(Spy newSpy) =>
+            await _spyCollection.InsertOneAsync(newSpy);
 
-            var result = await _spyingObjectCollection.ReplaceOneAsync(filter, updatedSpyingObject);
+        public async Task UpdateSpyAsync(string id, Spy updatedSpy) =>
+            await _spyCollection.ReplaceOneAsync(x => x.Id == id, updatedSpy);
 
-            if (result.MatchedCount == 0)
-            {
-                throw new InvalidOperationException($"SpyingObject with id {id} not found.");
-            }
-        }
+        public async Task DeleteSpyAsync(string id) =>
+            await _spyCollection.DeleteOneAsync(x => x.Id == id);
     }
 }

@@ -1,8 +1,20 @@
-﻿namespace BygSpy.Models
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+
+namespace BygSpy.Models
 {
     public class Spy
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+        public string? Id { get; set; }
+
+        [BsonElement("Name")]
+        public string Name { get; set; } = null!;
+
+        [BsonElement("Creator_Email")]
+        public string Creator_Email { get; set; } = null!;
+
+        [BsonElement("Notification")]
+        public bool Notification { get; set; }
+
     }
 }

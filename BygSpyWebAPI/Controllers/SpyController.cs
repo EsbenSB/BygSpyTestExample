@@ -11,46 +11,48 @@ namespace BygSpyWebAPI.Controllers
     {
         private readonly ISpyService _spyService;
 
-        public SpyController(DatabaseSettings databaseSettings, ISpyService spyService)
+        public SpyController(ISpyService spyService)
         {
             _spyService = spyService;
         }
 
         [HttpGet]
-        public async Task<List<Spy>> GetAllSpies()
+        public async Task<List<Spy>> Get()
         {
-            return await _spyService.GetAllSpies();
+            return await _spyService.GetAllSpiesAsync();
         }
 
         [HttpGet("{id}")]
-        public Task<Spy> GetSpyByIdAsync(string id)
+        public async Task<ActionResult<Spy>> Get(string id)
         {
-            //todo delete me when guid is fixed
-            id = "htrehtre";
-            var result = _spyService.GetSpyByIdAsync(id);
+            var result = await _spyService.GetSpyAsync(id);
+
+            if (result is null)
+            {
+                return NotFound();
+            }
+
             return result;
         } 
 
         [HttpPost]
-        public void PostSpy([FromBody] Spy Spy)
+        public async Task Post([FromBody] Spy Spy)
         {
-            _spyService.PostSpy(Spy);
+             await _spyService.CreateSpyAsync(Spy);
         }
 
         [HttpPut("{id}")]
-        public async void UpdateSpy(Guid id, [FromBody] Spy spyObject)
+        public async Task Update(string id, [FromBody] Spy spyObject)
         {
-            //todo delete me when guid is fixed
-           var test = "htrehtre";
-            //Convert.ToString(id)
-            await _spyService.UpdateSpyAsync(test, spyObject);
+            
+            await _spyService.UpdateSpyAsync(id, spyObject);
         }
 
         [HttpDelete("{id}")]
-        public async void DeleteSpyById(Guid id)
+        public async Task Delete(string id)
         {
             
-           await _spyService.DeleteSpyAsync(Convert.ToString(id));
+           await _spyService.DeleteSpyAsync(id);
         }
     }
 }

@@ -1,27 +1,31 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using Newtonsoft.Json;
 
 namespace BygSpyWebAPI.Models
 {
     public class User
     {
-      
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
+        [JsonProperty("_id")]
         public string? Id { get; set; }
 
         [BsonElement("Name")]
-        public string Name { get; set; }
+        [JsonProperty("Name")] 
+        public string Name { get; set; } = null!;
 
         [BsonElement("Email")]
-        public string Email { get; set; }
-
+        [JsonProperty("Email")]
+        public string Email { get; set; } = null!;
+        
         [BsonElement("Password")]
-        public string Password { get; set; }
+        [JsonProperty("Password")] 
+        public string Password { get; set; } = null!;
 
         [BsonElement("PhoneNumber")]
-        public string PhoneNumber { get; set; }
-
+        [JsonProperty("PhoneNumber")] 
+        public string PhoneNumber { get; set; } = null!;
     }
 }
 

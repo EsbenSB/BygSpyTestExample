@@ -1,36 +1,56 @@
 ﻿using BygSpyWebAPI.Models;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
-using BygSpyWebAPI.Services.Interfaces;
-using System.Net;
-using BygSpyWebAPI.Models;
-using ZstdSharp;
 using BygSpyWebAPI.Repositories.Interfaces;
+using BygSpyWebAPI.Services.Interfaces;
+using MongoDB.Bson;
+using Newtonsoft.Json.Linq;
 
 namespace BygSpyWebAPI.Services
 {
     public class SpyingObjectService : ISpyingObjectService
     {
-        
-        private readonly DatabaseSettings _databaseSettings;
         private readonly HttpClient _httpClient;
         private readonly ISpyingObjectRepository _spyingObjectRepository;
-        public SpyingObjectService(DatabaseSettings databaseSettings, HttpClient httpClient, ISpyingObjectRepository spyingObjectRepository)
+        public SpyingObjectService(HttpClient httpClient, ISpyingObjectRepository spyingObjectRepository)
         {
-            _databaseSettings = databaseSettings;
             _httpClient = httpClient;
             _spyingObjectRepository = spyingObjectRepository;
         }
 
-        public List<SpyingObject> CreateSpyObject()
+        public async Task<List<SpyingObject>> GetAllSpyingObjectAsync()
         {
-            // MongoDB operations to get all users
-            return new List<SpyingObject>();
+            try
+            {
+                var spyingObjects = await _spyingObjectRepository.GetAllSpyingObjectsAsync();
+                return spyingObjects;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+            return null;
         }
 
-        // til at lave et spyobject
-        public async Task<SpyingObjectTempEntity> GetAddressId(string address)
+        public async Task<SpyingObject> GetSpyingObjectByIdAsync(string id)
+        {
+            var result = await _spyingObjectRepository.GetSpyingObjectAsync(id);
+            return result;
+        }
+
+        public async Task<List<SpyingObject>> GetAllSpyingObjectsBySpyId(string spyId)
+        {
+            try
+            {
+                var spyingObjects = await _spyingObjectRepository.GetAllSpyingObjectsBySpyId(spyId);
+                return spyingObjects;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+            return null;
+        }
+
+        public async Task<SpyingObjectTempEntity> GetAddressIdAsync(string address)
         {
 
             try
@@ -39,32 +59,32 @@ namespace BygSpyWebAPI.Services
                 var encoded_address = EncodeingString(address);
                 string url = $"https://api.dataforsyningen.dk/adresser?q={encoded_address}";
 
-              
 
-                    HttpResponseMessage response = await _httpClient.GetAsync(url);
 
-                    if (response.IsSuccessStatusCode)
+                HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    JArray jsonArray = JArray.Parse(jsonResponse);
+
+                    foreach (JObject jsonObject in jsonArray)
                     {
-                        string jsonResponse = await response.Content.ReadAsStringAsync();
-
-                        JArray jsonArray = JArray.Parse(jsonResponse);
-
-                        foreach (JObject jsonObject in jsonArray)
-                        {
-                        spyingObjectTempEntity.addressId = (string)jsonObject["id"];
+                        spyingObjectTempEntity.AddressId = (string)jsonObject["id"];
                         spyingObjectTempEntity.Street = (string)jsonObject["adgangsadresse"]["vejstykke"]["navn"];
                         spyingObjectTempEntity.City = (string)jsonObject["adgangsadresse"]["postnummer"]["navn"];
 
-                        
+
                         if (spyingObjectTempEntity is not null)
-                                return spyingObjectTempEntity;
-                        }
+                            return spyingObjectTempEntity;
                     }
-                    else
-                    {
-                        Console.WriteLine($"Failed to fetch data. Status code: {response.StatusCode}");
-                    }
-                
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to fetch data. Status code: {response.StatusCode}");
+                }
+
             }
             catch (Exception ex)
             {
@@ -74,7 +94,7 @@ namespace BygSpyWebAPI.Services
             return null;
         }
 
-        public async Task<string> GetJordstykkeFromAddressId(string addressId)
+        public async Task<string> GetJordstykkeFromAddressIdAsync(string addressId)
         {
 
             try
@@ -114,43 +134,43 @@ namespace BygSpyWebAPI.Services
         }
 
 
-        public async Task<int> GetBfeFromJordstykke(string jordstykke)
+        public async Task<int> GetBfeFromJordstykkeAsync(string jordstykke)
         {
             int bfeNummer = 0;
             try
             {
                 string url = $"https://services.datafordeler.dk//BBR/BBRPublic/1/rest/grund?jordstykke={jordstykke}&&username=QRUSLIHSDE&password=SOFTWAREKval!tet2024";
-               
-                    HttpResponseMessage response = await _httpClient.GetAsync(url);
 
-                    if (response.IsSuccessStatusCode)
+                HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await response.Content.ReadAsStringAsync();
+
+                    JArray jsonArray = JArray.Parse(jsonResponse);
+
+                    foreach (JObject jsonObject in jsonArray)
                     {
-                        string jsonResponse = await response.Content.ReadAsStringAsync();
-
-                        JArray jsonArray = JArray.Parse(jsonResponse);
-
-                        foreach (JObject jsonObject in jsonArray)
-                        {
                         bfeNummer = Convert.ToInt32((string)jsonObject["bestemtFastEjendom"]["bfeNummer"]);
 
-                            return bfeNummer;
-                        }
+                        return bfeNummer;
                     }
-                    else
-                    {
-                        Console.WriteLine($"Failed to fetch data. Status code: {response.StatusCode}");
-                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to fetch data. Status code: {response.StatusCode}");
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
-            
-          
+
+
             return bfeNummer;
         }
 
-        public async Task<int> GetGrundFromBfe(int bfe)
+        public async Task<int> GetGrundFromBfeAsync(int bfe)
         {
             int status = 0;
             try
@@ -168,8 +188,8 @@ namespace BygSpyWebAPI.Services
                     foreach (JObject jsonObject in jsonArray)
                     {
                         status = (int)jsonObject["status"];
-                        
-                            return status;
+
+                        return status;
                     }
                 }
                 else
@@ -185,64 +205,7 @@ namespace BygSpyWebAPI.Services
             return status;
         }
 
-        public async Task PostSpyingObject(SpyingObject spyObject)
-        {
-            try
-            {
-               await _spyingObjectRepository.CreateSpyingObjectAsync(spyObject);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-        }
-        public async Task DeleteSpyingObject(string bfe)
-        {
-            try
-            {
-                await _spyingObjectRepository.DeleteSpyingObjectAsync(bfe);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-        }
-
-        public async Task<List<SpyingObject>> GetAllSpyingObjectAsync() 
-        {
-            try {
-                var spies = await _spyingObjectRepository.GetAllSpyingObjectAsync();
-                return spies;
-            }
-            catch(Exception ex) {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-            return null;
-        }
-
-        public async Task<SpyingObject> GetSpyingObjectByIdAsync(string bfe) 
-        {
-         var result = await _spyingObjectRepository.GetSpyingObjectByIdAsync(bfe);
-            return result;
-        }
-        public async Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject)
-        {
-            try
-            {
-                await _spyingObjectRepository.UpdateSpyingObjectAsync(id, updatedSpyingObject);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-        }
-
-
-
-        // slutning af at lave et spyobject
-
-        public async Task<SpyingObject> MapToSpyingObject(SpyingObjectTempEntity spyingObjectTempEntity, SpyingObject spyObject)
+        public async Task<SpyingObject> MapToSpyingObjectAsync(SpyingObjectTempEntity spyingObjectTempEntity, SpyingObject spyObject)
         {
             try
             {
@@ -257,34 +220,49 @@ namespace BygSpyWebAPI.Services
 
             return null;
         }
-        
-       
 
-
-        //todo move me to a json handler file
-        private string ParseIdFromResponse(string responseBody)
+        public async Task CreateSpyObjectAsync(SpyingObject newSpyingObject)
         {
-            // Parse the JSON array
-            JArray jsonArray = JArray.Parse(responseBody);
-
-            // Check if the array is not empty
-            if (jsonArray.Count > 0)
+            try
             {
-                // Extract the "id" field from the first address object
-                return jsonArray[0]["id"].ToString();
+                newSpyingObject.Id = ObjectId.GenerateNewId().ToString();
+                await _spyingObjectRepository.CreateSpyingObjectAsync(newSpyingObject);
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
 
-            // If the array is empty or doesn't contain the "id" field, return null
-            return null;
+        public async Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject)
+        {
+            try
+            {
+                await _spyingObjectRepository.UpdateSpyingObjectAsync(id, updatedSpyingObject);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+
+        public async Task DeleteSpyingObjectAsync(string id)
+        {
+            try
+            {
+                await _spyingObjectRepository.DeleteSpyingObjectAsync(id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
         }
 
         private string EncodeingString(string StringToConvert)
         {
-            // Parse the JSON array
             var encoded_StringToConvert = StringToConvert.Replace(" ", "%");
 
-          
-            // If the array is empty or doesn't contain the "id" field, return null
             return encoded_StringToConvert;
         }
 

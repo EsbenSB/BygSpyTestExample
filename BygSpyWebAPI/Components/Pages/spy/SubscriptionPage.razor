@@ -75,8 +75,8 @@
     // todo fix backknappen tror den skal ha noget mere plads
     public class ObjectModel
     {
-        public string Name { get; set; }
-        public string Address { get; set; }
+        public string Name { get; set; } = null!;
+        public string Address { get; set; } = null!;
         public bool IsSelected { get; set; } // Checkbox state
     }
     // List of objects
@@ -88,11 +88,11 @@
     };
 
     // New object details
-    private string newObjectName;
-    private string newObjectAddress;
+    private string newObjectName = null!;
+    private string newObjectAddress = null!;
 
     // Selected address to track
-    private string selectedAddress;
+    private string selectedAddress = null!;
 
     // Selected object for information popup
     private ObjectModel selectedObject;

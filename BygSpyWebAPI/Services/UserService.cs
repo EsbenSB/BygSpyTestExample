@@ -1,9 +1,8 @@
 ﻿using BygSpyWebAPI.Models;
-using BygSpyWebAPI.MongoDb;
 using BygSpyWebAPI.Repositories.Interfaces;
 using BygSpyWebAPI.Services.Interfaces;
 using MongoDB.Bson;
-using MongoDB.Driver;
+using System.ComponentModel.DataAnnotations;
 
 namespace BygSpyWebAPI.Services
 {
@@ -11,29 +10,13 @@ namespace BygSpyWebAPI.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IMongoCollection<User> _userCollection;
+        private readonly IEnumerable<IUserValidator> _validators;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository , IEnumerable<IUserValidator> validators)
         {
             _userRepository = userRepository;
+            _validators = validators;
         }
-
-        //public async Task<List<User>> GetAllUsersAsync() =>
-        //    await _userCollection.Find(_ => true).ToListAsync();
-
-        //public async Task<User?> GetUserAsync(string id) =>
-        //    await _userCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
-
-        //public async Task CreateUserAsync(User newUser) =>
-        //    await _userCollection.InsertOneAsync(newUser);
-
-        //public async Task UpdateUserAsync(string id, User updatedUser) =>
-        //    await _userCollection.ReplaceOneAsync(x => x.Id == id, updatedUser);
-
-        //public async Task RemoveUserAsync(string id) =>
-        //    await _userCollection.DeleteOneAsync(x => x.Id == id);
-
-
 
         public async Task<List<User>> GetAllUsersAsync()
         {
@@ -47,10 +30,19 @@ namespace BygSpyWebAPI.Services
             return result;
         }
 
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await _userRepository.GetUserByEmailAsync(email);
+        }
+
         public async Task CreateUserAsync(User newUser)
         {
             try
             {
+                foreach (var validator in _validators)
+                {
+                    await validator.ValidateAsync(newUser);
+                }
                 newUser.Id = ObjectId.GenerateNewId().ToString();
                 await _userRepository.CreateUserAsync(newUser);
             }

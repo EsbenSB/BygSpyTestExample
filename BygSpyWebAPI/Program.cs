@@ -1,10 +1,8 @@
-using BygSpyWebAPI;
 using BygSpyWebAPI.MongoDb;
 using BygSpyWebAPI.Services.Interfaces;
 using BygSpyWebAPI.Services;
 using BygSpyWebAPI.Repositories.Interfaces;
 using BygSpyWebAPI.Repositories;
-using BygSpyWebAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,15 +10,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<DatabaseSettings>();
-builder.Services.AddSingleton<MongoService>(); // Or whichever lifetime suits your application
-builder.Services.AddSingleton<BygSpyDBContext>(); // Register BygSpyDbContext
+builder.Services.AddSingleton<BygSpyDBContext>();
 builder.Services.AddSingleton<ISpyingObjectRepository, SpyingObjectRepository>();
 builder.Services.AddSingleton<ISpyingObjectService, SpyingObjectService>();
 builder.Services.AddSingleton<ISpyRepository, SpyRepository>();
+builder.Services.AddSingleton<ISpyNotificationService, SpyNotificationService>();
 builder.Services.AddSingleton<ISpyService, SpyService>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IUserValidator, EmailValidator>();
 builder.Services.AddHttpClient();
 var app = builder.Build();
 

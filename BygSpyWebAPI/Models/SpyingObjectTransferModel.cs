@@ -1,8 +1,8 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace BygSpy.Models
+namespace BygSpyWebAPI.Models
 {
-    public class SpyModel
+    public class SpyingObjectTransferModel
     {
         [BsonElement("Id")]
         public string? Id { get; set; }
@@ -10,10 +10,10 @@ namespace BygSpy.Models
         [BsonElement("NewObjectName")]
         public string NewObjectName { get; set; } = null!;
 
-        [BsonElement("Adress")]
+        [BsonElement("adress")]
         public string Adress { get; set; } = null!;
 
-        [BsonElement("SpyId")]
+        [BsonElement("spyId")]
         public string SpyId { get; set; } = null!;
     }
 }

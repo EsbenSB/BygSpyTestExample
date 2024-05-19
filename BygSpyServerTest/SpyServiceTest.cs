@@ -1,41 +1,100 @@
 ﻿using BygSpyWebAPI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BygSpyWebAPI.Repositories;
-using Moq;
+using BygSpyWebAPI.Repositories.Interfaces;
 using BygSpyWebAPI.Services;
 using FluentAssertions;
+using Moq;
 
 namespace BygSpyServerTest
 {
     public class SpyServiceTest
     {
-        //    private readonly SpyService _service;
-        //    public SpyServiceTest(SpyService service)
-        //    {
+        [Fact]
+        public async Task DeleteSpyAsync_Should_Call_DeleteSpyAsync_On_Repo()
+        {
+            // Arrange
+            var mockRepo = new Mock<ISpyRepository>();
+            var spyService = new SpyService(mockRepo.Object);
+            var spyId = "htrehtrehtrhrte";
 
-        //        _service = service;
+            // Act
+            await spyService.DeleteSpyAsync("any-id");
 
-        //    }
-        //    [Fact]
-        //    public void CreateSpy_Should_ReturnNewSpy()
-        //    {
-        //        // Arrange
-        //        var spy = new Spy
-        //        {
-        //            Name = "TestSpy"
-        //        };
+            // Assert
+            mockRepo.Verify(repo => repo.DeleteSpyAsync(spyId), Times.Once);
+        }
 
-        //        // Act
-        //        var newSpy = _service.CreateSpyAsync(spy);
+        [Fact]
+        public async Task UpdateSpyAsync_Should_Call_UpdateSpyAsync_On_Repo()
+        {
+            // Arrange
+            var mockRepo = new Mock<ISpyRepository>();
+            var spyService = new SpyService(mockRepo.Object);
+            var spyId = "some-id";
+            var updatedSpy = new Spy { Id = spyId, Name = "Updated Spy" };
 
-        //        // Assert
-        //        newSpy.Should().Be(spy);
+            // Act
+            await spyService.UpdateSpyAsync(spyId, updatedSpy);
 
-        //    }
-        //}
+            // Assert
+            mockRepo.Verify(repo => repo.UpdateSpyAsync(spyId, updatedSpy), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetAllSpies_Should_Return_List_Of_Spies()
+        {
+            // Arrange
+            var expectedSpies = new List<Spy>
+        {
+            new Spy { Id = "1", Name = "Spy 1" },
+            new Spy { Id = "2", Name = "Spy 2" }
+        };
+            var mockRepo = new Mock<ISpyRepository>();
+            mockRepo.Setup(repo => repo.GetAllSpyAsync()).ReturnsAsync(expectedSpies);
+
+            var spyService = new SpyService(mockRepo.Object);
+
+            // Act
+            var result = await spyService.GetAllSpiesAsync();
+
+            // Assert
+            result.Should().BeEquivalentTo(expectedSpies);
+        }
+
+        [Fact]
+        public async Task GetSpyByIdAsync_Should_Return_Spy()
+        {
+            // Arrange
+            var spyId = "some-id";
+            var expectedSpy = new Spy { Id = spyId, Name = "Spy" };
+            var mockRepo = new Mock<ISpyRepository>();
+            mockRepo.Setup(repo => repo.GetSpyByIdAsync(spyId)).ReturnsAsync(expectedSpy);
+
+            var spyService = new SpyService(mockRepo.Object);
+
+            // Act
+            var result = await spyService.GetSpyAsync(spyId);
+
+            // Assert
+            result.Should().BeEquivalentTo(expectedSpy);
+        }
+
+        [Fact]
+        public async Task PostSpy_Should_Call_CreateSpyAsync_On_Repo()
+        {
+            // Arrange
+            var newSpy = new Spy { Name = "New Spy" };
+            var mockRepo = new Mock<ISpyRepository>();
+            mockRepo.Setup(repo => repo.CreateSpyAsync(It.IsAny<Spy>())).Returns(Task.CompletedTask);
+
+            var spyService = new SpyService(mockRepo.Object);
+
+            // Act
+            await spyService.CreateSpyAsync(newSpy);
+
+            // Assert
+            mockRepo.Verify(repo => repo.CreateSpyAsync(It.Is<Spy>(s => s.Name == "New Spy" && !string.IsNullOrEmpty(s.Id))), Times.Once);
+        }
+
+
     }
 }

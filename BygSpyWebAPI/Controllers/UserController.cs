@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using BygSpyWebAPI.Services;
+﻿using Microsoft.AspNetCore.Mvc;
 using BygSpyWebAPI.Models;
-using BygSpyWebAPI.MongoDb;
 using BygSpyWebAPI.Services.Interfaces;
 
 namespace BygSpyWebAPI.Controllers
@@ -12,7 +9,7 @@ namespace BygSpyWebAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-
+        
         public UserController(IUserService userService)
         {
             _userService = userService;
@@ -39,7 +36,6 @@ namespace BygSpyWebAPI.Controllers
         public async Task<IActionResult> Post(User newUser)
         {
             await _userService.CreateUserAsync(newUser);
-
             return CreatedAtAction(nameof(Get), new { id = newUser.Id }, newUser);
         }
 

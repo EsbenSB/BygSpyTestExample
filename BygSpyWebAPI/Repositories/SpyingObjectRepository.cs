@@ -1,7 +1,6 @@
 ﻿using BygSpyWebAPI.Models;
 using BygSpyWebAPI.MongoDb;
 using BygSpyWebAPI.Repositories.Interfaces;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace BygSpyWebAPI.Repositories
@@ -10,60 +9,29 @@ namespace BygSpyWebAPI.Repositories
     {
         private readonly IMongoCollection<SpyingObject> _spyingObjectCollection;
 
-        public SpyingObjectRepository(MongoDb.BygSpyDBContext dbContext)
+        public SpyingObjectRepository(BygSpyDBContext dbContext)
         {
-            //todo ændre nedenstående senere
-            _spyingObjectCollection = (IMongoCollection<SpyingObject>?)dbContext.spy;
+            _spyingObjectCollection = dbContext.SpyObjects;
         }
 
+        public async Task<List<SpyingObject>> GetAllSpyingObjectsAsync() =>
+            await _spyingObjectCollection.Find(_ => true).ToListAsync();
+
+        public async Task<SpyingObject?> GetSpyingObjectAsync(string id) =>
+            await _spyingObjectCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+        public async Task<List<SpyingObject>> GetAllSpyingObjectsBySpyId(string spyId) =>
+            await _spyingObjectCollection.Find(x => x.SpyId == spyId).ToListAsync();
+        
         public async Task CreateSpyingObjectAsync(SpyingObject spyingObject)
         {
             await _spyingObjectCollection.InsertOneAsync(spyingObject);
         }
 
-        public async Task<List<SpyingObject>> GetAllSpyingObjectAsync()
-        {
-            try
-            {
-                var filter = Builders<SpyingObject>.Filter.Empty;
-                var result = await _spyingObjectCollection.Find(filter).ToListAsync();
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-            return null;
+        public async Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject) =>
+            await _spyingObjectCollection.ReplaceOneAsync(x => x.Id == id, updatedSpyingObject);
 
-        }
-        public async Task<SpyingObject> GetSpyingObjectByIdAsync(string bfe)
-        {
-            var filter = Builders<SpyingObject>.Filter.Eq("BFE", bfe);
-            var result = await _spyingObjectCollection.Find(filter).FirstOrDefaultAsync();
-            return result;
-        }
-        public async Task DeleteSpyingObjectAsync(string bfe)
-        {
-            var filter = Builders<SpyingObject>.Filter.Eq("BFE", bfe);
-            var result = await _spyingObjectCollection.DeleteOneAsync(filter);
-
-            if (result.DeletedCount == 0)
-            {
-                throw new InvalidOperationException($"SpyingObject with ID {bfe} not found.");
-            }
-        }
-        public async Task UpdateSpyingObjectAsync(string id, SpyingObject updatedSpyingObject)
-        {
-            Guid guidId = Guid.Parse(id);
-
-            var filter = Builders<SpyingObject>.Filter.Eq(s => s.Id, guidId);
-
-            var result = await _spyingObjectCollection.ReplaceOneAsync(filter, updatedSpyingObject);
-
-            if (result.MatchedCount == 0)
-            {
-                throw new InvalidOperationException($"SpyingObject with id {id} not found.");
-            }
-        }
+        public async Task DeleteSpyingObjectAsync(string id) =>
+            await _spyingObjectCollection.DeleteOneAsync(x => x.Id == id);
     }
 }
