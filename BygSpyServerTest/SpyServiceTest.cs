@@ -17,7 +17,7 @@ namespace BygSpyServerTest
             var spyId = "htrehtrehtrhrte";
 
             // Act
-            await spyService.DeleteSpyAsync("any-id");
+            await spyService.DeleteSpyAsync("htrehtrehtrhrte");
 
             // Assert
             mockRepo.Verify(repo => repo.DeleteSpyAsync(spyId), Times.Once);

@@ -11,11 +11,17 @@ namespace BygSpyWebAPI.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IEnumerable<IUserValidator> _validators;
+        private IUserRepository @object;
 
         public UserService(IUserRepository userRepository , IEnumerable<IUserValidator> validators)
         {
             _userRepository = userRepository;
             _validators = validators;
+        }
+
+        public UserService(IUserRepository @object)
+        {
+            this.@object = @object;
         }
 
         public async Task<List<User>> GetAllUsersAsync()
